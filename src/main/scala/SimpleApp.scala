@@ -1,6 +1,14 @@
 import org.apache.spark.sql.SparkSession
 
 object SimpleApp {
+
+  //$SPARK_HOME/bin/spark-submit   --class "SimpleApp"   --master local[4]   target/scala-2.11/simple-project_2.11-1.0.jar
+
+  val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate();
+  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt")
+  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt");
+
+
   case class Vote(voterId: Int, voteId: Int, candidate: String) {
     override def toString = s"$voterId $voteId $candidate"
   }
@@ -22,7 +30,7 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val voterList = spark.read.textFile("/Users/Shiv/Desktop/voterList.txt").map(parseVoterList).toDF()
+    val voterList = voterTxt.map(parseVoterList).toDF()
     // val voterList = spark.read.textFile("/Users/sumukhshivakumar/Desktop/voterList.txt").map(parseVoterList).toDF()
     val exists = voterList.filter($"voterId".contains(vote.voterId)).count()
     voterList.show()
@@ -39,10 +47,10 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val voterList = spark.read.textFile("/Users/Shiv/Desktop/voterList.txt").map(parseVoterList).toDF()
+    val voterList = voterTxt.map(parseVoterList).toDF()
     // val voterList = spark.read.textFile("/Users/sumukhshivakumar/Desktop/voterList.txt").map(parseVoterList).toDF()
     
-    val ballotbox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+    val ballotbox = ballotTxt.map(parseBallotBox).toDF()
     // val ballotbox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     val df = Seq((vote.voterId, vote.voteId, vote.candidate)).toDF("voterId", "voteId", "candidate")
     val updatedBallotBox = ballotbox.union(df)
@@ -55,7 +63,7 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val ballotBox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+    val ballotBox = ballotTxt.map(parseBallotBox).toDF()
     // val ballotBox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     import org.apache.spark.sql.functions._
     val ballotBox2 = ballotBox.sort($"voteId".desc).groupBy("voterId").agg(first("voteId").as("voteId"), first("candidate").as("candidate"))
@@ -71,7 +79,7 @@ object SimpleApp {
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
     import org.apache.spark.sql.functions._
-    val ballotBox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+    val ballotBox = ballotTxt.map(parseBallotBox).toDF()
     // val ballotBox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     val updatedDf = ballotBox.withColumn("voterId", regexp_replace(col("voterId"), ".",null))
     updatedDf.show()
@@ -82,7 +90,7 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val ballotBox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+    val ballotBox = ballotTxt.map(parseBallotBox).toDF()
     // val ballotBox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     ballotBox.show()
     val vote_counts = ballotBox.groupBy("candidate").count()
@@ -95,7 +103,7 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val ballotBox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+    val ballotBox = ballotTxt.map(parseBallotBox).toDF()
     // val ballotBox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     ballotBox.show()
 
