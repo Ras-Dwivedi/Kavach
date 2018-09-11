@@ -18,7 +18,7 @@ object SimpleApp {
     Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
   }
 
-  def castVote(vote: Vote): Boolean = {
+  def validateVote(vote: Vote): Boolean = { //TODO make this drop unlegit voters
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
@@ -27,18 +27,28 @@ object SimpleApp {
     val exists = voterList.filter($"voterId".contains(vote.voterId)).count()
     voterList.show()
     if (exists == 1) {
-      val ballotbox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-      // val ballotbox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-      val df = Seq((vote.voterId, vote.voteId, vote.candidate)).toDF("voterId", "voteId", "candidate")
-      val updatedBallotBox = ballotbox.union(df)
-      updatedBallotBox.show()
-      spark.stop()
       true
     } else {
       printf("INVALID VOTER!!!!")
       spark.stop()
       false
     }
+  }
+
+  def castVote(vote: Vote) = {
+    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
+    val sqlContext = spark.sqlContext
+    import sqlContext.implicits._
+    val voterList = spark.read.textFile("/Users/Shiv/Desktop/voterList.txt").map(parseVoterList).toDF()
+    // val voterList = spark.read.textFile("/Users/sumukhshivakumar/Desktop/voterList.txt").map(parseVoterList).toDF()
+    
+    val ballotbox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+    // val ballotbox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+    val df = Seq((vote.voterId, vote.voteId, vote.candidate)).toDF("voterId", "voteId", "candidate")
+    val updatedBallotBox = ballotbox.union(df)
+    updatedBallotBox.show()
+    spark.stop()
+     
   }
 
   def removeDuplicates() {
