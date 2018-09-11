@@ -13,9 +13,9 @@ object SimpleApp {
   }
 
   def parseBallotBox(str: String): Vote = {
-    val fields = str.split(" ")
+    val fields = str.split(",")
     assert(fields.size == 3)
-    Vote(fields(0).toInt, fields(1).toInt, fields(2))
+    Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
   }
 
   def castVote(vote: Vote): Boolean = {
@@ -48,7 +48,7 @@ object SimpleApp {
     val ballotBox = spark.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     // val ballotBox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     import org.apache.spark.sql.functions._
-    val ballotBox2 = ballotBox.sort($"voteId".desc).groupBy("voterId").agg(first("voterId").as("voterId"), first("voteId").as("voteId"), first("candidate").as("candidate"))
+    val ballotBox2 = ballotBox.sort($"voteId".desc).groupBy("voterId").agg(first("voteId").as("voteId"), first("candidate").as("candidate"))
     ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/Shiv/Desktop/test_result4.txt")
     // ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/sumukhshivakumar/Desktop/test_result4.txt")
     ballotBox2.show()
