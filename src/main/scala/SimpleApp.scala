@@ -4,9 +4,11 @@ object SimpleApp {
 
   //$SPARK_HOME/bin/spark-submit   --class "SimpleApp"   --master local[4]   target/scala-2.11/simple-project_2.11-1.0.jar
 
-  val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate();
+  val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate()
   val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt")
-  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt");
+  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt")
+  import sparkInital.sqlContext.implicits._
+  var validatedBallotBot = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
 
 
   case class Vote(voterId: Int, voteId: Int, candidate: String) {
@@ -26,7 +28,12 @@ object SimpleApp {
     Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
   }
 
-  def validateVote(vote: Vote): Boolean = { //TODO make this drop unlegit voters
+  def validateVote() {//TODO make this drop unlegit voters -> updates validatedBallotBot
+      //for every vote, call validateVote2
+      //then, serialize validatedBallotBot to text file
+  }
+
+  def validateVote2(vote: Vote): Boolean = { 
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
@@ -38,6 +45,11 @@ object SimpleApp {
       true
     } else {
       printf("INVALID VOTER!!!!")
+      //drop voter
+      // validatedBallotBot = validatedBallotBot.filter(not($"voterId" == vote.voterId))
+      val id = vote.voterId
+      validatedBallotBot = validatedBallotBot.filter("voterId == $id")
+
       spark.stop()
       false
     }
