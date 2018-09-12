@@ -1,39 +1,47 @@
 import org.apache.spark.sql.SparkSession
-
+//TODO: Visualization of DAG
 object SimpleApp {
 
   //$SPARK_HOME/bin/spark-submit   --class "SimpleApp"   --master local[4]   target/scala-2.11/simple-project_2.11-1.0.jar
 
-  val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate()
-  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt")
-  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt")
-  import sparkInital.sqlContext.implicits._
-  var validatedBallotBot = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-
+  //  val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate()
+  //  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt")
+  //  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt")
+  //  import sparkInital.sqlContext.implicits._
+  //  var validatedBallotBot = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
 
   case class Vote(voterId: Int, voteId: Int, candidate: String) {
     override def toString = s"$voterId $voteId $candidate"
   }
   case class Voter(voterId: Int)
 
+  val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate()
+  val voterTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/voterlist.txt")
+  val ballotTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt")
+  import sparkInital.sqlContext.implicits._
+  var validatedBallotBot = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+
+
   def parseVoterList(str: String): Voter = {
     val fields = str.split(" ")
+//    val fields = str.split(",")
     assert(fields.size == 1)
     Voter(fields(0).toInt)
   }
 
   def parseBallotBox(str: String): Vote = {
-    val fields = str.split(",")
+    val fields = str.split(" ")
     assert(fields.size == 3)
-    Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
+    Vote(fields(0).toInt, fields(1).toInt, fields(2))
+//    Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
   }
 
   def validateVote() {//TODO make this drop unlegit voters -> updates validatedBallotBot
-      //for every vote, call validateVote2
-      //then, serialize validatedBallotBot to text file
+    //for every vote, call validateVote2
+    //then, serialize validatedBallotBot to text file
   }
 
-  def validateVote2(vote: Vote): Boolean = { 
+  def validateVote2(vote: Vote): Boolean = {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
@@ -61,14 +69,13 @@ object SimpleApp {
     import sqlContext.implicits._
     val voterList = voterTxt.map(parseVoterList).toDF()
     // val voterList = spark.read.textFile("/Users/sumukhshivakumar/Desktop/voterList.txt").map(parseVoterList).toDF()
-    
     val ballotbox = ballotTxt.map(parseBallotBox).toDF()
     // val ballotbox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     val df = Seq((vote.voterId, vote.voteId, vote.candidate)).toDF("voterId", "voteId", "candidate")
     val updatedBallotBox = ballotbox.union(df)
     updatedBallotBox.show()
     spark.stop()
-     
+
   }
 
   def removeDuplicates() {
@@ -116,19 +123,19 @@ object SimpleApp {
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
     val ballotBox = ballotTxt.map(parseBallotBox).toDF()
-    // val ballotBox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
     ballotBox.show()
+    val vote = ballotBox.filter($"voterId" === id)
+    vote.show()
 
   }
-
-
 
   def main(args: Array[String]) {
     //    count_votes()
     //    anon_vote()
-//    val vote = new Vote(1234, 120, "b")
-//    castVote(vote)
-    removeDuplicates()
+    //    val vote = new Vote(1234, 120, "b")
+    //    castVote(vote)
+    //    removeDuplicates()
+    checkVote(211)
   }
 
 }
