@@ -88,33 +88,7 @@ object SimpleApp {
 
   }
 
-  def validateVote2(vote: Vote): Boolean = {
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-    val sqlContext = spark.sqlContext
-    import sqlContext.implicits._
-    val voterList = voterTxt.map(parseVoterList).toDF()
-    // val voterList = spark.read.textFile("/Users/sumukhshivakumar/Desktop/voterList.txt").map(parseVoterList).toDF()
-    val exists = voterList.filter($"voterId".contains(vote.voterId)).count()
-    voterList.show()
-    if (exists == 1) {
-      true
-    } else {
-      printf("INVALID VOTER!!!!")
-      //drop voter
-      // validatedBallotBot = validatedBallotBot.filter(not($"voterId" == vote.voterId))
-      val id = vote.voterId
-      // validatedBallotBot = validatedBallotBot.filter("voterId == id")
-      import org.apache.spark.sql.functions._
 
-      validatedBallotBot = validatedBallotBot.filter(col("voterId") >= lit(id))
-      validatedBallotBot = validatedBallotBot.filter(col("voterId") <= lit(id))
-
-
-
-      //spark.stop()
-      false
-    }
-  }
 
   def castVote(vote: Vote) = {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
