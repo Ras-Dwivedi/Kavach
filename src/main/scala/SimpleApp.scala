@@ -39,7 +39,7 @@ object SimpleApp {
   def validateVote() {//TODO make this drop unlegit voters -> updates validatedBallotBot
     //for every vote, call validateVote2
     //then, serialize validatedBallotBot to text file
-    val rows = validatedBallotBot.collect()//.map(t => println(t))
+    val rows = validatedBallotBot.collect()//.map(t => println(t)) //TODO: Do this using a filter
     // for ((a, b, c) <- rows) {
     //   val currVote = Vote(a, b, c)
     // }
@@ -94,11 +94,11 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val voterList = voterTxt.map(parseVoterList).toDF()
+    val voterList = voterTxt.map(parseVoterList).toDF() //Delete line //TODO find if .toDF is concertizing the voeterTxt
     // val voterList = spark.read.textFile("/Users/sumukhshivakumar/Desktop/voterList.txt").map(parseVoterList).toDF()
-    val ballotbox = ballotTxt.map(parseBallotBox).toDF()
+    val ballotbox = ballotTxt.map(parseBallotBox)
     // val ballotbox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-    val df = Seq((vote.voterId, vote.voteId, vote.candidate)).toDF("voterId", "voteId", "candidate")
+    val df = Seq((vote.voterId, vote.voteId, vote.candidate))
     val updatedBallotBox = ballotbox.union(df)
     updatedBallotBox.show()
     spark.stop()
