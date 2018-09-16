@@ -13,7 +13,7 @@ object SimpleApp {
   val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate()
   // val voterTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/voterlist.txt")
   // val ballotTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt")
-  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt")
+  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt") //read.textFile is lazy
   val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt")
   import sparkInital.sqlContext.implicits._
   // var validatedBallotBot = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
@@ -96,9 +96,9 @@ object SimpleApp {
     import sqlContext.implicits._
     val voterList = voterTxt.map(parseVoterList).toDF() //Delete line //TODO find if .toDF is concertizing the voeterTxt
     // val voterList = spark.read.textFile("/Users/sumukhshivakumar/Desktop/voterList.txt").map(parseVoterList).toDF()
-    val ballotbox = ballotTxt.map(parseBallotBox)
+    val ballotbox = ballotTxt.map(parseBallotBox).toDF()
     // val ballotbox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-    val df = Seq((vote.voterId, vote.voteId, vote.candidate))
+    val df = Seq((vote.voterId, vote.voteId, vote.candidate)).toDF("voterId", "voteId", "candidate")
     val updatedBallotBox = ballotbox.union(df)
     updatedBallotBox.show()
     spark.stop()
@@ -136,11 +136,11 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val ballotBox = ballotTxt.map(parseBallotBox).toDF()
+    val ballotBox = ballotTxt.map(parseBallotBox) //EDIT Removed .toDF()
     // val ballotBox = spark.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-    ballotBox.show()
-    val vote_counts = ballotBox.groupBy("candidate").count()
-    vote_counts.show()
+    // ballotBox.show() //EDIT: No need to materialize
+    val vote_counts = ballotBox.groupBy("candidate").count() //Actually materialize and run count operation
+    vote_counts.show() 
     //    vote_counts.write.format("csv").save("/Users/sumukhshivakumar/Desktop/vote_counts.csv")
     spark.stop()
   }
@@ -149,10 +149,10 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val ballotBox = ballotTxt.map(parseBallotBox).toDF()
-    ballotBox.show()
+    val ballotBox = ballotTxt.map(parseBallotBox) //EDIT: Removed .toDF()
+    // ballotBox.show() //EDIT: No need to materialize ballotbox
     val vote = ballotBox.filter($"voterId" === id)
-    vote.show()
+    vote.show() //Display the updated ballotBox
 
   }
 
@@ -162,8 +162,8 @@ object SimpleApp {
     //    val vote = new Vote(1234, 120, "b")
     //    castVote(vote)
     //    removeDuplicates()
-    //checkVote(211)
-    validateVote()
+    checkVote(211)
+    // validateVote()
   }
 
 }
