@@ -2,6 +2,8 @@ import org.apache.spark.sql.SparkSession
 //TODO: Visualization of DAG
 object SimpleApp {
 
+  //export SPARK_HOME=/usr/local/Cellar/apache-spark/2.3.1/libexec
+
   //$SPARK_HOME/bin/spark-submit   --class "SimpleApp"   --master local[4]   target/scala-2.11/simple-project_2.11-1.0.jar
 
 
@@ -96,6 +98,11 @@ object SimpleApp {
     ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/Shiv/Desktop/test_result4.txt") //Evaluation actually happens here
     // ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/sumukhshivakumar/Desktop/test_result4.txt")
     ballotBox2.show()  //Show the calculated evaluation
+
+    while (true) { //so that we can view spark UI in meantime
+    
+    }
+
     spark.stop()
   }
 
@@ -134,6 +141,9 @@ object SimpleApp {
 
     val vote = ballotBox.filter($"voterId" === id)
     vote.show() //Display the updated ballotBox
+    while (true) { //so that we can view spark UI in meantime
+
+    }
 
   }
 
@@ -142,8 +152,8 @@ object SimpleApp {
     //    anon_vote()
     //    val vote = new Vote(1234, 120, "b")
     //    castVote(vote)
-    //    removeDuplicates()
-    checkVote(211)
+       removeDuplicates()
+    // checkVote(211)
     // validateVote()
   }
 
