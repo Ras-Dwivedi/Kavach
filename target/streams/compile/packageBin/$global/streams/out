@@ -2,14 +2,14 @@
 [0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator36$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator36$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator13$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator13$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$Voter.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$Voter.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator8$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator8$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$Vote.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$Vote.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$anonfun$validateVote$2.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$anonfun$validateVote$2.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	votes[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/votes[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$anonfun$removeDuplicates$1.class[0m
@@ -24,10 +24,10 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$anonfun$4.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$anonfun$2.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$anonfun$2.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$anonfun$8.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$anonfun$8.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator28$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator28$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$anonfun$validateVote$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$anonfun$validateVote$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$anonfun$6.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$anonfun$6.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator32$1.class[0m
@@ -44,10 +44,8 @@
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$anonfun$5.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator24$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator24$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator40$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator40$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator21$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator21$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$$typecreator17$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$$typecreator17$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$Vote$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	  /Users/sumukhshivakumar/Documents/research/Kavach/target/scala-2.11/classes/SimpleApp$Vote$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	SimpleApp$.class[0m

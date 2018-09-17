@@ -13,12 +13,11 @@ object SimpleApp {
   import sparkInital.sqlContext.implicits._
 
   // global variables, one set for both
-  val voterTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Documents/research/Kavach/voterlist.txt")
-  val ballotTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Documents/research/Kavach/ballotbox.txt")
-  var validatedBallotBox = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-//  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt") //read.textFile is lazy
-//  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt")
-//  var validatedBallotBox = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+  val voterTxt = sparkInital.read.textFile("voterlist.txt")
+  val ballotTxt = sparkInital.read.textFile("ballotbox.txt")
+  var validatedBallotBox = sparkInital.read.textFile("ballotbox.txt").map(parseBallotBox).toDF()
+  val testResult4 = "test_result4.txt"
+  val testResult5 = "test_result5.txt"
 
   def parseVoterList(str: String): Voter = {
     val fields = str.split(" ")
@@ -55,7 +54,7 @@ object SimpleApp {
         validatedBallotBox = validatedBallotBox.filter(not(col("voterId") === lit(id)))
       }
     }
-    validatedBallotBox.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/Shiv/Desktop/test_result5.txt")
+    validatedBallotBox.rdd.map(_.toString()).repartition(1).saveAsTextFile(testResult5)
   }
 
 
@@ -68,6 +67,7 @@ object SimpleApp {
     val newRow = Seq((vote.voterId, vote.voteId, vote.candidate))
     val updatedBallotBox = ballotbox.union(newRow.toDF("voterId", "voteId", "candidate"))
     updatedBallotBox.show()
+    while (true) {}
     spark.stop()
   }
 
@@ -78,11 +78,9 @@ object SimpleApp {
     val ballotBox = ballotTxt.map(parseBallotBox) //EDIT: removed .toDF()
     import org.apache.spark.sql.functions._
     val ballotBox2 = ballotBox.sort($"voteId".desc).groupBy("voterId").agg(first("voteId").as("voteId"), first("candidate").as("candidate")) //lazy evalution
-    ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/Shiv/Desktop/test_result4.txt") //Evaluation actually happens here
-    // ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/sumukhshivakumar/Desktop/test_result4.txt")
-    ballotBox2.show()  //Show the calculated evaluation
-    while (true) { //so that we can view spark UI in meantime
-    }
+    ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile(testResult4) //Evaluation actually happens here
+    ballotBox2.show()
+    while (true) {}
     spark.stop()
   }
 
@@ -92,9 +90,10 @@ object SimpleApp {
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
     import org.apache.spark.sql.functions._
-    val ballotBox = ballotTxt.map(parseBallotBox) //EDIT: removed .toDF()
+    val ballotBox = ballotTxt.map(parseBallotBox)
     val updatedDf = ballotBox.withColumn("voterId", regexp_replace(col("voterId"), ".",null)) //TODO: Use a simpler function
     updatedDf.show() //Actually materialize and display the ballotbox
+    while (true) {}
     spark.stop()
   }
 
@@ -102,9 +101,10 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val ballotBox = ballotTxt.map(parseBallotBox) //EDIT Removed .toDF()
-    val vote_counts = ballotBox.groupBy("candidate").count() //Actually materialize and run count operation
-    vote_counts.show() 
+    val ballotBox = ballotTxt.map(parseBallotBox)
+    val vote_counts = ballotBox.groupBy("candidate").count() //Materializes and runs count operation
+    vote_counts.show()
+    while (true) {}
     spark.stop()
   }
 
@@ -112,20 +112,20 @@ object SimpleApp {
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
-    val ballotBox = ballotTxt.map(parseBallotBox) //EDIT: Removed .toDF()
+    val ballotBox = ballotTxt.map(parseBallotBox)
     val vote = ballotBox.filter($"voterId" === id)
-    vote.show() //Display the updated ballotBox
-    while (true) { //so that we can view spark UI in meantime
-    }
+    vote.show()
+    while (true) {}
+    spark.stop()
   }
 
   def main(args: Array[String]) {
-    validateVote()
-    val vote = new Vote(1234, 120, "b")
-    castVote(vote)
+//    validateVote()
+//    val vote = new Vote(1234, 120, "b")
+//    castVote(vote)
     removeDuplicates()
-    anonVote()
-    generateResults()
-    checkVote(211)
+//    anonVote()
+//    generateResults()
+//    checkVote(211)
   }
 }
