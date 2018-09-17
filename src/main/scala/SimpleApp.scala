@@ -1,32 +1,27 @@
 import org.apache.spark.sql.SparkSession
-//TODO: Visualization of DAG
 object SimpleApp {
 
-  //export SPARK_HOME=/usr/local/Cellar/apache-spark/2.3.1/libexec
-
-  //$SPARK_HOME/bin/spark-submit   --class "SimpleApp"   --master local[4]   target/scala-2.11/simple-project_2.11-1.0.jar
-
-
+  // Vote object used in ballotBox dataframe
   case class Vote(voterId: Int, voteId: Int, candidate: String) {
     override def toString = s"$voterId $voteId $candidate"
   }
+
+  // Voter object used in voterList dataframe
   case class Voter(voterId: Int)
 
   val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate()
-  // val voterTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/voterlist.txt")
-  // val ballotTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt")
-  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt") //read.textFile is lazy
-  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt")
   import sparkInital.sqlContext.implicits._
-  // var validatedBallotBot = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
-  var validatedBallotBot = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
 
-
-
+  // global variables, one set for both
+  val voterTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Documents/research/Kavach/voterlist.txt")
+  val ballotTxt = sparkInital.read.textFile("/Users/sumukhshivakumar/Documents/research/Kavach/ballotbox.txt")
+  var validatedBallotBox = sparkInital.read.textFile("/Users/sumukhshivakumar/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
+//  val voterTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/voterList.txt") //read.textFile is lazy
+//  val ballotTxt = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt")
+//  var validatedBallotBox = sparkInital.read.textFile("/Users/Shiv/Desktop/ballotbox.txt").map(parseBallotBox).toDF()
 
   def parseVoterList(str: String): Voter = {
     val fields = str.split(" ")
-
     assert(fields.size == 1)
     Voter(fields(0).toInt)
   }
@@ -34,14 +29,13 @@ object SimpleApp {
   def parseBallotBox(str: String): Vote = {
     val fields = str.split(",")
     assert(fields.size == 3)
-  
-   Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
+    Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
   }
 
-  def validateVote() {//TODO make this drop unlegit voters -> updates validatedBallotBot
+  def validateVote() {//TODO make this drop unlegit voters -> updates validatedBallotBox
     //for every vote, call validateVote2
-    //then, serialize validatedBallotBot to text file
-    val rows = validatedBallotBot.collect()//.map(t => println(t)) //TODO: Do this using a filter
+    //then, serialize validatedBallotBox to text file
+    val rows = validatedBallotBox.collect()//.map(t => println(t)) //TODO: Do this using a filter
    
     val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
     val sqlContext = spark.sqlContext
@@ -49,29 +43,19 @@ object SimpleApp {
     val voterList = voterTxt.map(parseVoterList).toDF()
 
     for(i <- 0 until rows.length){
-
       val currVote = Vote(rows(i)(0).toString.toInt, rows(i)(1).toString.toInt, rows(i)(2).toString);
-      
       val exists = voterList.filter($"voterId".contains(currVote.voterId)).count()
       voterList.show()
       if (exists == 1) {
-        
       } else {
         printf("INVALID VOTER!!!!")
         //drop voter
         val id = currVote.voterId
-        
         import org.apache.spark.sql.functions._
-
-        validatedBallotBot = validatedBallotBot.filter(not(col("voterId") === lit(id)))
-        
+        validatedBallotBox = validatedBallotBox.filter(not(col("voterId") === lit(id)))
       }
-
-
     }
-
-    validatedBallotBot.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/Shiv/Desktop/test_result5.txt")
-
+    validatedBallotBox.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/Shiv/Desktop/test_result5.txt")
   }
 
 
@@ -85,7 +69,6 @@ object SimpleApp {
     val updatedBallotBox = ballotbox.union(newRow.toDF("voterId", "voteId", "candidate"))
     updatedBallotBox.show()
     spark.stop()
-
   }
 
   def removeDuplicates() {
@@ -98,11 +81,8 @@ object SimpleApp {
     ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/Shiv/Desktop/test_result4.txt") //Evaluation actually happens here
     // ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile("/Users/sumukhshivakumar/Desktop/test_result4.txt")
     ballotBox2.show()  //Show the calculated evaluation
-
     while (true) { //so that we can view spark UI in meantime
-    
     }
-
     spark.stop()
   }
 
@@ -123,9 +103,6 @@ object SimpleApp {
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
     val ballotBox = ballotTxt.map(parseBallotBox) //EDIT Removed .toDF()
-
-    // ballotBox.show() //EDIT: No need to materialize
-
     val vote_counts = ballotBox.groupBy("candidate").count() //Actually materialize and run count operation
     vote_counts.show() 
     spark.stop()
@@ -136,25 +113,19 @@ object SimpleApp {
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
     val ballotBox = ballotTxt.map(parseBallotBox) //EDIT: Removed .toDF()
-
-    // ballotBox.show() //EDIT: No need to materialize ballotbox
-
     val vote = ballotBox.filter($"voterId" === id)
     vote.show() //Display the updated ballotBox
     while (true) { //so that we can view spark UI in meantime
-
     }
-
   }
 
   def main(args: Array[String]) {
-    //    count_votes()
-    //    anon_vote()
-    //    val vote = new Vote(1234, 120, "b")
-    //    castVote(vote)
-       removeDuplicates()
-    // checkVote(211)
-    // validateVote()
+    validateVote()
+    val vote = new Vote(1234, 120, "b")
+    castVote(vote)
+    removeDuplicates()
+    anonVote()
+    generateResults()
+    checkVote(211)
   }
-
 }
