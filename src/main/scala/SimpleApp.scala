@@ -1,4 +1,6 @@
 import org.apache.spark.sql.SparkSession
+
+
 object SimpleApp {
 
   // Vote object used in ballotBox dataframe
@@ -9,13 +11,13 @@ object SimpleApp {
   // Voter object used in voterList dataframe
   case class Voter(voterId: Int)
 
-  val sparkInital = SparkSession.builder.appName("Simple Application").getOrCreate()
-  import sparkInital.sqlContext.implicits._
+  val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
+  import spark.sqlContext.implicits._
 
   // global variables, one set for both
-  val voterTxt = sparkInital.read.textFile("voterlist.txt")
-  val ballotTxt = sparkInital.read.textFile("ballotbox.txt")
-  var validatedBallotBox = sparkInital.read.textFile("ballotbox.txt").map(parseBallotBox).toDF()
+  val voterTxt = spark.read.textFile("voterlist.txt")
+  val ballotTxt = spark.read.textFile("ballotbox.txt")
+  var validatedBallotBox = spark.read.textFile("ballotbox.txt").map(parseBallotBox).toDF()
   val testResult4 = "test_result4.txt"
   val testResult5 = "test_result5.txt"
 
@@ -59,26 +61,23 @@ object SimpleApp {
 
 
 
-  def castVote(vote: Vote) = { //TODO make efficent
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-    val sqlContext = spark.sqlContext
-    import sqlContext.implicits._
-    val ballotbox = ballotTxt.map(parseBallotBox).toDF()//TODO Remove this .toDF and find a different union method for the rdd
-    val newRow = Seq((vote.voterId, vote.voteId, vote.candidate))
-    val updatedBallotBox = ballotbox.union(newRow.toDF("voterId", "voteId", "candidate"))
+  def castVote(vote: Vote) = {
+    spark.newSession()
+    val ballotbox = ballotTxt.map(parseBallotBox).toDF()
+    val updatedBallotBox = ballotbox.union(Seq((vote.voterId, vote.voteId, vote.candidate)).toDF())
     updatedBallotBox.show()
     while (true) {}
     spark.stop()
   }
 
   def removeDuplicates() {
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-    val sqlContext = spark.sqlContext
-    import sqlContext.implicits._
-    val ballotBox = ballotTxt.map(parseBallotBox) //EDIT: removed .toDF()
+    spark.newSession()
+    val ballotBox = ballotTxt.map(parseBallotBox)
     import org.apache.spark.sql.functions._
-    val ballotBox2 = ballotBox.sort($"voteId".desc).groupBy("voterId").agg(first("voteId").as("voteId"), first("candidate").as("candidate")) //lazy evalution
-    ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile(testResult4) //Evaluation actually happens here
+    val ballotBox2 = ballotBox.sort($"voteId".desc)
+                    .groupBy("voterId")
+                    .agg(first("voteId").as("voteId"), first("candidate").as("candidate"))
+    ballotBox2.rdd.map(_.toString()).repartition(1).saveAsTextFile(testResult4)
     ballotBox2.show()
     while (true) {}
     spark.stop()
@@ -86,32 +85,25 @@ object SimpleApp {
 
 
   def anonVote(): Unit = {
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-    val sqlContext = spark.sqlContext
-    import sqlContext.implicits._
-    import org.apache.spark.sql.functions._
+    spark.newSession()
     val ballotBox = ballotTxt.map(parseBallotBox)
-    val updatedDf = ballotBox.withColumn("voterId", regexp_replace(col("voterId"), ".",null)) //TODO: Use a simpler function
-    updatedDf.show() //Actually materialize and display the ballotbox
+    val updatedDf = ballotBox.map(x => Vote(Predef.Integer2int(null), x.voteId, x.candidate))
+    updatedDf.show()
     while (true) {}
     spark.stop()
   }
 
   def generateResults(): Unit = {
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-    val sqlContext = spark.sqlContext
-    import sqlContext.implicits._
+    spark.newSession()
     val ballotBox = ballotTxt.map(parseBallotBox)
-    val vote_counts = ballotBox.groupBy("candidate").count() //Materializes and runs count operation
+    val vote_counts = ballotBox.groupBy("candidate").count()
     vote_counts.show()
     while (true) {}
     spark.stop()
   }
 
   def checkVote(id: Int): Unit = {
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-    val sqlContext = spark.sqlContext
-    import sqlContext.implicits._
+    spark.newSession()
     val ballotBox = ballotTxt.map(parseBallotBox)
     val vote = ballotBox.filter($"voterId" === id)
     vote.show()
