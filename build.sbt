@@ -1,4 +1,4 @@
-name := "Simple Project"
+name := "Voting System"
 
 version := "1.0"
 
