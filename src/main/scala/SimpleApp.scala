@@ -11,7 +11,7 @@ object SimpleApp {
   // Voter object used in voterList dataframe
   case class Voter(voterId: Int)
 
-  val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
+  val spark = SparkSession.builder.appName("Voting System").getOrCreate()
   import spark.sqlContext.implicits._
 
   // global variables, one set for both
@@ -38,7 +38,7 @@ object SimpleApp {
     //then, serialize validatedBallotBox to text file
     val rows = validatedBallotBox.collect()//.map(t => println(t)) //TODO: Do this using a filter
    
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
+    val spark = SparkSession.builder.appName("Voting System").getOrCreate()
     val sqlContext = spark.sqlContext
     import sqlContext.implicits._
     val voterList = voterTxt.map(parseVoterList).toDF()
