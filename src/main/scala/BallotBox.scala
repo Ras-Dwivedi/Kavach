@@ -99,6 +99,10 @@ class BallotBox {
     spark.stop()
   }
 
+  def main(args: Array[String]): Unit = {
+    
+  }
+
 //   def main(args: Array[String]) {
 // //    validateVote()
 // //    val vote = new Vote(1234, 120, "b")

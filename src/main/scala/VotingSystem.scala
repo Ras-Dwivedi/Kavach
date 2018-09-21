@@ -6,7 +6,7 @@ object VotingSystem {
 
   //Command needed to run
   //export SPARK_HOME=/usr/local/Cellar/apache-spark/2.3.1/libexec
-  //$SPARK_HOME/bin/spark-submit   --class "VotingSystem"   --master local[4]   target/scala-2.11/simple-project_2.11-1.0.jar
+  //$SPARK_HOME/bin/spark-submit   --class "VotingSystem"   --master local[4]   target/scala-2.11/voting-system_2.11-1.0.jar
 
   // Vote object used in ballotBox dataframe
   case class Vote(voterId: Int, voteId: Int, candidate: String) {
@@ -46,9 +46,10 @@ object VotingSystem {
 //    anonVote()
 //    generateResults()
 //    checkVote(211)
+    import org.apache.spark.sql.DataFrame
     val ballotboxobj = new BallotBox()
-      import org.apache.spark.sql.DataFrame
 
-    ballotboxobj.ballotBox = (DataFrame) (ballotTxt.map(parseBallotBox))
+
+//    ballotboxobj.ballotBox = (DataFrame) (ballotTxt.map(parseBallotBox))
   }
 }
