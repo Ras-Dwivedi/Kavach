@@ -9,9 +9,9 @@ object VotingSystem {
   //$SPARK_HOME/bin/spark-submit   --class "VotingSystem"   --master local[4]   target/scala-2.11/voting-system_2.11-1.0.jar
 
   // Vote object used in ballotBox dataframe
-  case class Vote(voterId: Int, voteId: Int, candidate: String) {
-    override def toString = s"$voterId $voteId $candidate"
-  }
+  // case class Vote(voterId: Int, voteId: Int, candidate: String) {
+  //   override def toString = s"$voterId $voteId $candidate"
+  // }
 
   // Voter object used in voterList dataframe
   case class Voter(voterId: Int)
@@ -35,7 +35,16 @@ object VotingSystem {
   def parseBallotBox(str: String): Vote = {
     val fields = str.split(",")
     assert(fields.size == 3)
-    Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
+    return new Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
+  }
+
+  def generateResults(): Unit = {
+    spark.newSession()
+    val ballotBox = ballotTxt.map(parseBallotBox)
+    val vote_counts = ballotBox.groupBy("candidate").count()
+    vote_counts.show()
+    while (true) {}
+    spark.stop()
   }
 
   def main(args: Array[String]) {
@@ -48,6 +57,7 @@ object VotingSystem {
 //    checkVote(211)
     import org.apache.spark.sql.DataFrame
     val ballotboxobj = new BallotBox()
+    ballotboxobj.generateResults()
 
 
 //    ballotboxobj.ballotBox = (DataFrame) (ballotTxt.map(parseBallotBox))

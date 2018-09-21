@@ -1,5 +1,3 @@
-package votes
-class Vote(var cred:Int, var id:Int, var vote:String) {
-
-  override def toString = s"$cred $id $vote"
-}
+case class Vote(voterId: Int, voteId: Int, candidate: String) {
+    override def toString = s"$voterId $voteId $candidate"
+  }
