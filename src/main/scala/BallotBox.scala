@@ -17,14 +17,6 @@ class BallotBox {
 
   import spark.sqlContext.implicits._
 
-  // global variables, one set for both
-  val voterTxt = spark.read.textFile("voterlist.txt")
-  val ballotTxt = spark.read.textFile("ballotbox.txt")
-  // var validatedBallotBox = spark.read.textFile("ballotbox.txt").map(parseBallotBox).toDF()
-  val testResult4 = "test_result4.txt"
-  val testResult5 = "test_result5.txt"
-
-
   // def validateVote() {//TODO make this drop unlegit voters -> updates validatedBallotBox
   //   //for every vote, call validateVote2
   //   //then, serialize validatedBallotBox to text file
@@ -55,8 +47,8 @@ class BallotBox {
 
   // def castVote(vote: Vote) = {
   //   spark.newSession()
-  //   val ballotbox = ballotTxt.map(parseBallotBox).toDF()
-  //   val updatedBallotBox = ballotbox.union(Seq((vote.voterId, vote.voteId, vote.candidate)).toDF())
+  //   // val ballotbox = ballotTxt.map(parseBallotBox).toDF()
+  //   val updatedBallotBox = ballotBox.union(Seq((vote.voterId, vote.voteId, vote.candidate)).toDF())
   //   updatedBallotBox.show()
   //   while (true) {}
   //   spark.stop()
@@ -84,11 +76,11 @@ class BallotBox {
 
   def anonVote(): Unit = {
     spark.newSession()
-      // import spark.sqlContext.implicits._
+      import spark.sqlContext.implicits._
 
     // val ballotBox = ballotTxt.map(parseBallotBox)
-    // val updatedDf = ballotBox.map(x => Vote(Predef.Integer2int(null), x.voteId, x.candidate))
-    // updatedDf.show()
+    val updatedDf = ballotBox.map(x => Vote(Predef.Integer2int(null), x.voteId, x.candidate))
+    updatedDf.show()
     while (true) {}
     spark.stop()
   }
@@ -98,6 +90,8 @@ class BallotBox {
       // import spark.sqlContext.implicits._
 
     // val ballotBox = ballotTxt.map(parseBallotBox)
+    import spark.implicits._
+
     val vote_counts = ballotBox.groupBy("candidate").count()
     vote_counts.show()
     while (true) {}
@@ -106,15 +100,15 @@ class BallotBox {
 
   def checkVote(id: Int): Unit = {
     spark.newSession()
-    // val vote = ballotBox.filter($"voterId" === id)
-    // vote.show()
+        import spark.implicits._
+
+    val vote = ballotBox.filter($"voterId" === id)
+    vote.show()
     while (true) {}
     spark.stop()
   }
 
-  def main(args: Array[String]): Unit = {
-    
-  }
+
 
 
 }
