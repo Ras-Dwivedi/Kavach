@@ -8,14 +8,14 @@ class BallotBox {
   //export SPARK_HOME=/usr/local/Cellar/apache-spark/2.3.1/libexec
   //$SPARK_HOME/bin/spark-submit   --class "VotingSystem"   --master local[4]   target/scala-2.11/simple-project_2.11-1.0.jar
   import org.apache.spark.sql.DataFrame
+  import spark.implicits._
+  import org.apache.spark.sql.functions._
+  import spark.sqlContext.implicits._
   
   val spark = SparkSession.builder.appName("Voting System").getOrCreate()
-  import spark.implicits._
   val ballotBox  = spark.read.textFile("voterlist.txt").map(parseBallotBox)
 
   case class Voter(voterId: Int)
-
-  import spark.sqlContext.implicits._
 
   // def validateVote() {//TODO make this drop unlegit voters -> updates validatedBallotBox
   //   //for every vote, call validateVote2
@@ -63,8 +63,6 @@ class BallotBox {
   def removeDuplicates() {
     spark.newSession()
 
-    import org.apache.spark.sql.functions._
-    import spark.implicits._
     val ballotBox2 = ballotBox.sort($"voteId".desc)
                     .groupBy("voterId")
                     .agg(first("voteId").as("voteId"), first("candidate").as("candidate"))
@@ -76,8 +74,6 @@ class BallotBox {
 
   def anonVote(): Unit = {
     spark.newSession()
-      import spark.sqlContext.implicits._
-
     // val ballotBox = ballotTxt.map(parseBallotBox)
     val updatedDf = ballotBox.map(x => Vote(Predef.Integer2int(null), x.voteId, x.candidate))
     updatedDf.show()
@@ -87,10 +83,8 @@ class BallotBox {
 
   def generateResults(): Unit = {
     spark.newSession()
-      // import spark.sqlContext.implicits._
 
     // val ballotBox = ballotTxt.map(parseBallotBox)
-    import spark.implicits._
 
     val vote_counts = ballotBox.groupBy("candidate").count()
     vote_counts.show()
@@ -100,7 +94,6 @@ class BallotBox {
 
   def checkVote(id: Int): Unit = {
     spark.newSession()
-        import spark.implicits._
 
     val vote = ballotBox.filter($"voterId" === id)
     vote.show()
