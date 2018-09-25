@@ -72,7 +72,7 @@ class BallotBox extends java.io.Serializable {
 
     // val ballotBox = ballotTxt.map(parseBallotBox)
     import spark.implicits._
-
+    // ballotBox.groupByKey(x => x.ReadCandidate());
     val vote_counts = ballotBox.groupBy("candidate").count()
     return vote_counts
     spark.stop()
