@@ -1,7 +1,7 @@
 import org.apache.spark.sql.SparkSession
 
 
-class BallotBox {
+class BallotBox extends java.io.Serializable{
 
 
   //Command needed to run
@@ -11,7 +11,7 @@ class BallotBox {
   
   val spark = SparkSession.builder.appName("Voting System").getOrCreate()
   import spark.implicits._
-  val ballotBox  = spark.read.textFile("voterlist.txt").map(parseBallotBox)
+  val ballotBox  = spark.read.textFile("ballotbox.txt").map(parseBallotBox)
   print(ballotBox)
 
   case class Voter(voterId: Int)
@@ -83,10 +83,8 @@ class BallotBox {
   def anonVote(): Unit = {
     spark.newSession()
     import spark.sqlContext.implicits._
-
-    // val ballotBox = ballotTxt.map(parseBallotBox)
-    val updatedDf = ballotBox.map(x => Vote(Predef.Integer2int(null), x.voteId, x.candidate))
-    updatedDf.show()
+    import org.apache.spark.sql.functions._
+    val updatedDf = ballotBox.withColumn("voterId", regexp_replace(col("voterId"), ".",null))
     while (true) {}
     spark.stop()
   }
