@@ -82,6 +82,7 @@ class BallotBox extends java.io.Serializable {
     spark.newSession()
     import spark.implicits._
     //print(ballotBox.filter($"voterId" === id).getC)
+    // return ballot.filter(v => v.ReadVoterId() == id)
     return ballotBox.filter($"voterId" === id)
     spark.stop()
   }
