@@ -13,7 +13,6 @@ class BallotBox extends java.io.Serializable {
   val ballotBox  = spark.read.textFile("ballotbox.txt").map(parseBallotBox)
   case class Voter(voterId: Int)
   import spark.sqlContext.implicits._
-//  import org.apache.spark.sql.Dataset
 
   def parseBallotBox(str: String): Vote = {
     val fields = str.split(",")
@@ -63,31 +62,27 @@ class BallotBox extends java.io.Serializable {
       import org.apache.spark.sql.functions._
       import spark.implicits._
       val ballotBox2 = ballotBox.sort($"voteId".desc).groupBy("voterId").agg(first("voteId").as("voteId"), first("candidate").as("candidate"))
-      ballotBox2.show()
+      return ballotBox2
       spark.stop()
   }
 
+  def generateResults(): Any = {
+    spark.newSession()
+      // import spark.sqlContext.implicits._
 
+    // val ballotBox = ballotTxt.map(parseBallotBox)
+    import spark.implicits._
 
-//  def generateResults(): Unit = {
-//    spark.newSession()
-//      // import spark.sqlContext.implicits._
-//
-//    // val ballotBox = ballotTxt.map(parseBallotBox)
-//    import spark.implicits._
-//
-//    val vote_counts = ballotBox.groupBy("candidate").count()
-//    vote_counts.show()
-//    while (true) {}
-//    spark.stop()
-//  }
-//
-//  def checkVote(id: Int): Unit = {
-//    spark.newSession()
-//    import spark.implicits._
-//    val vote = ballotBox.filter($"voterId" === id)
-//    vote.show()
-//    while (true) {}
-//    spark.stop()
-//  }
+    val vote_counts = ballotBox.groupBy("candidate").count()
+    return vote_counts
+    spark.stop()
+  }
+
+  def checkVote(id: Int): Any = {
+    spark.newSession()
+    import spark.implicits._
+    //print(ballotBox.filter($"voterId" === id).getC)
+    return ballotBox.filter($"voterId" === id)
+    spark.stop()
+  }
 }
