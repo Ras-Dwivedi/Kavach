@@ -3,16 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="e0ca10f7-bba7-4037-adda-0e1cd5de37ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ballotbox.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ballotbox.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/BallotBox.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/BallotBox.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/Vote.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/Vote.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/VotingSystem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/VotingSystem.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$$anonfun$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$$anonfun$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$$typecreator4$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$$typecreator4$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$Voter$.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$Voter$.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$Voter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox$Voter.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/classes/BallotBox.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/scala-2.11/classes/Vote.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/classes/Vote.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/scala-2.11/classes/VotingSystem$.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/classes/VotingSystem$.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/scala-2.11/voting-system_2.11-1.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/scala-2.11/voting-system_2.11-1.0.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/streams/compile/compile/$global/streams/out" beforeDir="false" afterPath="$PROJECT_DIR$/target/streams/compile/compile/$global/streams/out" afterDir="false" />
@@ -20,7 +11,6 @@
       <change beforePath="$PROJECT_DIR$/target/streams/compile/compileIncremental/$global/streams/export" beforeDir="false" afterPath="$PROJECT_DIR$/target/streams/compile/compileIncremental/$global/streams/export" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/streams/compile/compileIncremental/$global/streams/out" beforeDir="false" afterPath="$PROJECT_DIR$/target/streams/compile/compileIncremental/$global/streams/out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/streams/compile/packageBin/$global/streams/inputs" beforeDir="false" afterPath="$PROJECT_DIR$/target/streams/compile/packageBin/$global/streams/inputs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/streams/compile/packageBin/$global/streams/out" beforeDir="false" afterPath="$PROJECT_DIR$/target/streams/compile/packageBin/$global/streams/out" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/project/project/target/" />
@@ -40,7 +30,7 @@
     <session id="-1322817695">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="4" />
+          <entry key="project.closed" value="5" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.6" value="1" />
@@ -60,49 +50,18 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="scala" value="1583" />
+          <entry key="scala" value="1895" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Scala" value="1583" />
+          <entry key="Scala" value="1895" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/BallotBox.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="70" lean-forward="true" selection-start-line="70" selection-end-line="70" />
-              <folding>
-                <element signature="e#2414#2453#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/VotingSystem.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="28" lean-forward="true" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/Vote.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" column="31" selection-start-line="8" selection-start-column="31" selection-end-line="8" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -114,6 +73,7 @@
       <find>test_result5</find>
       <find>ballot</find>
       <find>.sort($</find>
+      <find>dataset</find>
     </findStrings>
     <replaceStrings>
       <replace>validatedBallotBox</replace>
@@ -133,7 +93,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="23" />
+    <option name="y" value="77" />
     <option name="width" value="1280" />
     <option name="height" value="734" />
   </component>
@@ -191,7 +151,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1537849685821" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1537854835021" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
@@ -268,7 +228,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="734" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22132471" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -338,25 +297,25 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/scala/BallotBox.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="70" lean-forward="true" selection-start-line="70" selection-end-line="70" />
+        <state relative-caret-position="402">
+          <caret line="84" column="46" selection-start-line="84" selection-start-column="46" selection-end-line="84" selection-end-column="46" />
           <folding>
             <element signature="e#2414#2453#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/Vote.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/VotingSystem.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="31" selection-start-line="8" selection-start-column="31" selection-end-line="8" selection-end-column="31" />
+        <state relative-caret-position="240">
+          <caret line="16" column="38" selection-start-line="16" selection-start-column="38" selection-end-line="16" selection-end-column="38" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala/VotingSystem.scala">
+    <entry file="file://$PROJECT_DIR$/src/main/scala/Vote.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="28" lean-forward="true" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
+        <state relative-caret-position="240">
+          <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
         </state>
       </provider>
     </entry>
