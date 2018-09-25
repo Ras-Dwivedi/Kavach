@@ -12,6 +12,7 @@ class BallotBox {
   val spark = SparkSession.builder.appName("Voting System").getOrCreate()
   import spark.implicits._
   val ballotBox  = spark.read.textFile("voterlist.txt").map(parseBallotBox)
+  print(ballotBox)
 
   case class Voter(voterId: Int)
 
@@ -68,7 +69,12 @@ class BallotBox {
     val ballotBox2 = ballotBox.sort($"voteId".desc)
                     .groupBy("voterId")
                     .agg(first("voteId").as("voteId"), first("candidate").as("candidate"))
-
+    print("BALLOTBOX2!!!!!!!!!!!!")
+    print(ballotBox2)
+    print(ballotBox2.getClass())
+    val ballotBox3 = ballotBox2.count()
+    print(ballotBox3)
+//    ballotBox2.collect().foreach(println)
     while (true) {}
     spark.stop()
   }
@@ -76,7 +82,7 @@ class BallotBox {
 
   def anonVote(): Unit = {
     spark.newSession()
-      import spark.sqlContext.implicits._
+    import spark.sqlContext.implicits._
 
     // val ballotBox = ballotTxt.map(parseBallotBox)
     val updatedDf = ballotBox.map(x => Vote(Predef.Integer2int(null), x.voteId, x.candidate))
@@ -100,8 +106,7 @@ class BallotBox {
 
   def checkVote(id: Int): Unit = {
     spark.newSession()
-        import spark.implicits._
-
+    import spark.implicits._
     val vote = ballotBox.filter($"voterId" === id)
     vote.show()
     while (true) {}
