@@ -1,6 +1,6 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/sumukhshivakumar/Documents/research/Kavach/src/main/scala/BallotBox.scala:47:110: type mismatch;[0m
-[0m[[0m[31merror[0m] [0m[0m found   : Int(2)[0m
-[0m[[0m[31merror[0m] [0m[0m required: Vote[0m
-[0m[[0m[31merror[0m] [0m[0m    val vote_counts = ballotBox.map(v => (v.readVote(), v)).groupByKey(_._1).reduceGroups((a, b) => (a._1, 1 + 1)).map(_._2)[0m
-[0m[[0m[31merror[0m] [0m[0m                                                                                                             ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/sumukhshivakumar/Documents/research/Kavach/src/main/scala/BallotBox.scala:44:86: type mismatch;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : org.apache.spark.sql.Row[0m
+[0m[[0m[31merror[0m] [0m[0m required: org.apache.spark.sql.catalyst.InternalRow[0m
+[0m[[0m[31merror[0m] [0m[0m    val ballotBox4 = ballotBox3.map(x => voteExpEncoder.toRow(voteExpEncoder.fromRow(x)))[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                     ^[0m
 [0m[[0m[31merror[0m] [0m[0mone error found[0m

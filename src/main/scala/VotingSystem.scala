@@ -16,7 +16,8 @@ object VotingSystem {
 //    print(ballotboxobj.generateResults())
     print("HELLOOOOOO\n")
 //    print(ballotboxobj.checkVote(211))
-    print(ballotboxobj.generateResults())
+//    print(ballotboxobj.generateResults())
+    print(ballotboxobj.removeDuplicates())
 
 //    print(vote.compareCredential(vote2))
 //    print(vote.readCredential())
