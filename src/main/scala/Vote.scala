@@ -10,6 +10,10 @@ case class Vote(voterId: Int, voteId: Int, candidate: String) {
     return voterId
   }
 
+  def readVoteId(): Int = {
+    return voteId
+  }
+
   def readVote(): String = {
     return candidate
   }

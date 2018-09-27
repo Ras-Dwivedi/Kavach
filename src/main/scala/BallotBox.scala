@@ -21,7 +21,7 @@ class BallotBox extends java.io.Serializable {
       spark.newSession()
       print(ballotBox.getClass())
       import spark.sqlContext.implicits._
-      val ds = Seq(Vote(vote.voterId, vote.voteId, vote.candidate)).toDS()
+      val ds = Seq(Vote(vote.readCredential(), vote.readVoteId(), vote.readVote())).toDS()
       val updatedBallotBox = ballotBox.union(ds)
       updatedBallotBox.show()
       return updatedBallotBox
