@@ -32,3 +32,14 @@ object Policy{
   }
 
 }
+
+object Tester {
+  def main(args: Array[String]) {
+    val test = new Policy("test", PolicyState.State1);
+    println("Original Policy")
+    println(test)
+    println("Policy After transition")
+    println(Policy.transition(test, Action2("hello")))
+
+  }
+}
