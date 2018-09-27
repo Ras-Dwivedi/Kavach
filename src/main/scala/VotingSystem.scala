@@ -15,7 +15,8 @@ object VotingSystem {
     val vote2 = new Vote(1234, 121, "Shiv K.")
 //    print(ballotboxobj.generateResults())
     print("HELLOOOOOO\n")
-    print(ballotboxobj.checkVote(211))
+//    print(ballotboxobj.checkVote(211))
+    print(ballotboxobj.generateResults())
 
 //    print(vote.compareCredential(vote2))
 //    print(vote.readCredential())

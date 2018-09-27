@@ -2,9 +2,6 @@ import org.apache.spark.sql.SparkSession
 
 
 class BallotBox extends java.io.Serializable {
-
-
-  //Command needed to run
   //export SPARK_HOME=/usr/local/Cellar/apache-spark/2.3.1/libexec
   //$SPARK_HOME/bin/spark-submit   --class "VotingSystem"   --master local[4]   target/scala-2.11/voting-system_2.11-1.0.jar
 
@@ -42,12 +39,9 @@ class BallotBox extends java.io.Serializable {
 
   def generateResults(): Any = {
     spark.newSession()
-      // import spark.sqlContext.implicits._
-
-    // val ballotBox = ballotTxt.map(parseBallotBox)
     import spark.implicits._
-    // ballotBox.groupByKey(x => x.ReadCandidate());
-    val vote_counts = ballotBox.groupBy("candidate").count()
+    val vote_counts = ballotBox.map(v => (v.readVote(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    vote_counts.show()
     return vote_counts
     spark.stop()
   }

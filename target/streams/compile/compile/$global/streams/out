@@ -1,4 +1,6 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/sumukhshivakumar/Documents/research/Kavach/src/main/scala/BallotBox.scala:86:37: not found: type Dataset[0m
-[0m[[0m[31merror[0m] [0m[0m    removeDuplicates().asInstanceOf[Dataset].filter($"voterId" === id).map(x => Vote(x.getAs[Int](0), x.getAs[Int](1), x.getAs[Int](2)))[0m
-[0m[[0m[31merror[0m] [0m[0m                                    ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/sumukhshivakumar/Documents/research/Kavach/src/main/scala/BallotBox.scala:47:110: type mismatch;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : Int(2)[0m
+[0m[[0m[31merror[0m] [0m[0m required: Vote[0m
+[0m[[0m[31merror[0m] [0m[0m    val vote_counts = ballotBox.map(v => (v.readVote(), v)).groupByKey(_._1).reduceGroups((a, b) => (a._1, 1 + 1)).map(_._2)[0m
+[0m[[0m[31merror[0m] [0m[0m                                                                                                             ^[0m
 [0m[[0m[31merror[0m] [0m[0mone error found[0m
