@@ -20,14 +20,14 @@ object Policy{
         e match {
           case ReadVote(x) => cloneNewState(d, PolicyState.State1)
           case Action2(x) => cloneNewState(d, PolicyState.State2)
-          case _ => d
+          case _ => throw new IllegalArgumentException("Illegal Operation");
         }
       case PolicyState.State2 =>
         e match {
           case ReadVote(x) => cloneNewState(d, PolicyState.State2)
-          case _ => d
+          case _ => throw new IllegalArgumentException("Illegal Operation");
         }
-      case _ => d
+      case _ => throw new IllegalArgumentException("Illegal Operation");
     }
   }
 
