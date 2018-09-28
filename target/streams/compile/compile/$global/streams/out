@@ -1,4 +1,0 @@
-[0m[[0m[31merror[0m] [0m[0m/Users/sumukhshivakumar/Documents/research/Kavach/src/main/scala/BallotBox.scala:57:36: value reduceByKey is not a member of org.apache.spark.sql.Dataset[(String, Int)][0m
-[0m[[0m[31merror[0m] [0m[0m    val vote_counts2 = vote_counts.reduceByKey(_ + _)//.collect()[0m
-[0m[[0m[31merror[0m] [0m[0m                                   ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m

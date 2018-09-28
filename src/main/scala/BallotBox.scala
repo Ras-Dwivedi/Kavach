@@ -31,18 +31,9 @@ class BallotBox extends java.io.Serializable {
   def removeDuplicates() : Any = {
     spark.newSession()
     import org.apache.spark.sql.functions._
-      import spark.implicits._
-//    val ballotBox2 = ballotBox.sort($"voteId".desc).groupBy("voterId").agg(first("voteId").as("voteId"), first("candidate").as("candidate"))
+    import spark.implicits._
     val ballotBox2 = ballotBox.map(v => (v.readCredential(), v)).groupByKey(_._1).reduceGroups((a, b) => (a._1, b._2)).map(_._2)
-//    import org.apache.spark.sql.Encoders
-//    val voteEncoder = Encoders.product[Vote]
-//    import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
-//    val voteExpEncoder = voteEncoder.asInstanceOf[ExpressionEncoder[Vote]]
     val ballotBox3 = ballotBox2.select(col("_2")).as("Vote")
-//    val ballotBox4 = ballotBox3.map(x => voteExpEncoder.toRow(voteExpEncoder.fromRow(x)))
-//    ballotBox4.show()
-//    ballotBox.show()
-//    ballotBox2.show()
     ballotBox3.show()
     return ballotBox2
     spark.stop()
