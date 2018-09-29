@@ -7,7 +7,7 @@ class BallotBox extends java.io.Serializable {
 
   val spark = SparkSession.builder.appName("Voting System").getOrCreate()
   import spark.implicits._
-  val ballotBox  = spark.read.textFile("ballotbox.txt").map(parseBallotBox)
+  val ballotBox  = spark.read.textFile("ballotbox.txt").map(parseBallotBox).as[Vote]
   case class Voter(voterId: Int)
   import spark.sqlContext.implicits._
 
