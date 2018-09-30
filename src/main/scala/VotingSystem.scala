@@ -24,10 +24,13 @@ object VotingSystem {
 
 
     val vote = new Vote(1234, 120, "b")
-    println("Original Policy")
-    vote.printPolicy()
-    println("Policy After readVote")
+    println("Original State")
+    vote.printState()
+    println("State After readVote")
     vote.readVote()
-    vote.printPolicy()
+    vote.printState()
+    println("State After anonVote")
+    vote.anonVote()
+    vote.printState()
   }
 }

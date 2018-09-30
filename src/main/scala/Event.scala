@@ -1,4 +1,5 @@
 trait Event
 
-case class ReadVote(id: String) extends Event
-case class Action2(id: String) extends Event
+case class ReadVote() extends Event
+case class ReadCredential() extends Event
+case class AnonVote() extends Event
