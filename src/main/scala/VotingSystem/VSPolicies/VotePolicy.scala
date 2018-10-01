@@ -6,14 +6,15 @@ class VotePolicy(var policyState: PolicyState) extends Policy(policyState) {
 
   override def transition(e: Operation) = {
     policyState match {
-      case VotingState(_) =>
+      case V_VotingState(_) =>
         e match {
           case ReadVote(_) => { /*no state change*/ }
           case ReadCredential(_) => { /*no state change*/ }
-          case AnonVote(_) => changeState(new VotingCompletedState("Voting"))
+          case ReadVoteId(_) => { /*no state change*/ }
+          case AnonVote(_) => changeState(V_VotingCompletedState("Voting"))
           case _ => throw new IllegalArgumentException("Illegal Operation");
         }
-      case VotingCompletedState(_) =>
+      case V_VotingCompletedState(_) =>
         e match {
           case ReadVote(_) => { /*no state change*/ }
           case _ => throw new IllegalArgumentException("Illegal Operation");

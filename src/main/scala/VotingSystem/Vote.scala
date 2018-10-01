@@ -2,32 +2,33 @@ case class Vote(voterId: Int, voteId: Int, candidate: String) {
 
   override def toString = s"$voterId $voteId $candidate\n"
 
-  var policy = new VotePolicy(new VotingState("Voting"))
+  var policy = new VotePolicy(V_VotingState("Voting"))
 
   def printState() = {
-      println(policy.policyState.name)
-  }
-
-  def compareCredential(vote: Vote): Boolean = {
-    return vote.readCredential() == readCredential()
+      println("Vote policy in state: " + policy.policyState.name)
   }
 
   def readCredential(): Int = {
-    policy.transition(new ReadCredential("readCredential"))
+    policy.transition(ReadCredential("readCredential"))
+    printState()
     return voterId
   }
 
   def readVoteId(): Int = {
+    policy.transition(ReadVoteId("readVoteId"))
+    printState()
     return voteId
   }
 
   def readVote(): String = {
-    policy.transition(new ReadVote("readVote"))
+    policy.transition(ReadVote("readVote"))
+    printState()
     return candidate
   }
 
   def anonVote(): Vote = {
-    policy.transition(new AnonVote("anonVote"))
+    policy.transition(AnonVote("anonVote"))
+    printState()
     return Vote(null.asInstanceOf[Int], voterId, candidate)
   }
 }

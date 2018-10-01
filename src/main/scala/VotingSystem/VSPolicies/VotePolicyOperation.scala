@@ -13,3 +13,9 @@ case class ReadCredential(override val name: String) extends Operation(name)
   * @param name
   */
 case class AnonVote(override val name: String) extends Operation(name)
+
+/**
+  * Represents the reading of voteId operation
+  * @param name
+  */
+case class ReadVoteId(override val name: String) extends Operation(name)
