@@ -21,10 +21,10 @@ object VotingSystem {
 
     Session.spark.newSession()
     import Session.spark.implicits._
-    ballotboxobj.removeDuplicates()
+    // ballotboxobj.removeDuplicates()
     //    ballotboxobj.addVote(vote)
     //    ballotboxobj.anonVote()
-    //    ballotboxobj.generateResults()
+        ballotboxobj.generateResults()
     //    ballotboxobj.checkVote(211)
     Session.spark.stop()
 //    val vote = new Vote(1234, 120, "b")
