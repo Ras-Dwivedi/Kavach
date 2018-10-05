@@ -1,4 +1,5 @@
 
+import org.apache.spark.sql.Dataset
 
 abstract case class KavachDataset[T]() {
   val policy: Policy
