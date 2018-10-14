@@ -4,6 +4,8 @@ import java.util.{Calendar, Date}
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import VotingSystem.parseBallotBox
+
 object Session {
   val spark = SparkSession.builder.appName("Voting System").getOrCreate()
 }
@@ -71,15 +73,35 @@ object VotingSystem {
 
   def main(args: Array[String]) {
     import Session.spark.implicits._
+
     val patientFile  = Session.spark.read.textFile("patients.csv")
     patientFile.count()
 
+    // SCENARIO 1
     val patient_demographics = patientFile.filter(v => !(v._1 contains "patient_id")).map(v => patientAttributes(v))
-//    val ballotboxobj = new BallotBox(ballotBoxDS)
 
-//    Session.spark.newSession()
-//    import Session.spark.implicits._
-//    ballotboxobj.generateResults()
-//    Session.spark.stop()
+    // SCENARIO 2
+    val patientFile  = Session.spark.read.textFile("patients.csv").map(patientAttributes())
+
+    // 1. Find the distribution of male and female patients
+    val patientGender = patientFile.map(v => (v.readGender(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    patientGender.show()
+
+    // 2. Find distribution for married status
+    val patientMarriedStatus = patientFile.map(v => (v.readMartialStatus(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    patientMarriedStatus.show()
+
+    // 3. Find distribution for different age groups
+    val patientAgeGroupWise = patientFile.map(v => (v.readAgeGroup(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    patientAgeGroupWise.show()
+
+    // 4. Find top 5 cities from where we have most number of patients with patient frequency
+    import org.apache.spark.sql.functions.countDistinct
+    val patientCityWise = patientFile.toDF().agg(countDistinct("city")).head(5)
+    patientCityWise.show()
+
+    // 5. Find distribution smoking_status/smoking habit
+    val patientSmokingWise = patientFile.map(v => (v.readSmokingStatus(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    patientSmokingWise.show()
   }
 }

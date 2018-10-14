@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="e0ca10f7-bba7-4037-adda-0e1cd5de37ca" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/scala/HealthCareSystem/HealthCareSystem.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/HealthCareSystem/HealthCareSystem.scala" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/scala/HealthCareSystem/Patient.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/scala/HealthCareSystem/Patient.scala" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/project/project/target/" />
@@ -52,13 +51,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="properties" value="8" />
-          <entry key="scala" value="3618" />
+          <entry key="scala" value="3874" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Properties" value="8" />
-          <entry key="Scala" value="3618" />
+          <entry key="Scala" value="3874" />
         </counts>
       </usages-collector>
     </session>
@@ -110,8 +109,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala/HealthCareSystem/HealthCareSystem.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="392">
-              <caret line="67" column="31" selection-start-line="67" selection-start-column="31" selection-end-line="67" selection-end-column="31" />
+            <state relative-caret-position="355">
+              <caret line="97" column="67" lean-forward="true" selection-start-line="97" selection-start-column="67" selection-end-line="97" selection-end-column="67" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
               </folding>
@@ -122,17 +121,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/HealthCareSystem/Patient.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="50">
-              <caret line="4" column="150" selection-start-line="4" selection-start-column="150" selection-end-line="4" selection-end-column="150" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala/VotingSystem/VotingSystem.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="11" column="29" lean-forward="true" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
+            <state relative-caret-position="296">
+              <caret line="22" column="23" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -140,8 +130,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala/VotingSystem/BallotBox.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="301">
-              <caret line="36" column="36" lean-forward="true" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
+            <state relative-caret-position="273">
+              <caret line="36" column="130" lean-forward="true" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="130" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
               </folding>
@@ -559,8 +549,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/VotingSystem/BallotBox.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="36" column="36" lean-forward="true" selection-start-line="36" selection-start-column="36" selection-end-line="36" selection-end-column="36" />
+        <state relative-caret-position="273">
+          <caret line="36" column="130" lean-forward="true" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="130" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
           </folding>
@@ -569,22 +559,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/VotingSystem/VotingSystem.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="11" column="29" lean-forward="true" selection-start-line="11" selection-start-column="29" selection-end-line="11" selection-end-column="29" />
+        <state relative-caret-position="270">
+          <caret line="18" column="4" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="87" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/HealthCareSystem/Patient.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="4" column="150" selection-start-line="4" selection-start-column="150" selection-end-line="4" selection-end-column="150" />
+        <state relative-caret-position="296">
+          <caret line="22" column="23" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala/HealthCareSystem/HealthCareSystem.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="67" column="31" selection-start-line="67" selection-start-column="31" selection-end-line="67" selection-end-column="31" />
+        <state relative-caret-position="355">
+          <caret line="97" column="67" lean-forward="true" selection-start-line="97" selection-start-column="67" selection-end-line="97" selection-end-column="67" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
           </folding>
