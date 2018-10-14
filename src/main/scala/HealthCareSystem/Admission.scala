@@ -19,6 +19,4 @@ case class Admission(admissionId: Int, patientId: Int, admissionDate: String, di
   def readDischargeDate(): String = {
     return dischargeDate
   }
-
-  
 }

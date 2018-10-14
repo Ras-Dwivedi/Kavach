@@ -1,3 +1,5 @@
+import com.sun.tools.javac.resources.version
+
 name := "Voting System"
 
 version := "1.0"

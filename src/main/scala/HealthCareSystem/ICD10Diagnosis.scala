@@ -11,5 +11,4 @@ case class ICD10Diagnosis(ICD10Code: Int, diagnosisDescription: String) {
   def readDiagnosisDescription(): String = {
     return diagnosisDescription
   }
-  
 }

@@ -27,6 +27,4 @@ case class Patient(patientId: Int, DOB: String, gender: String, martialStatus: S
   def readCity(): String = {
     return city
   }
-
-  
 }
