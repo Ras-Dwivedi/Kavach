@@ -43,7 +43,7 @@ object VotingSystem {
     }
   }
 
-  def calculateAge(born: String): Calendar = {
+  def calculateAge(born: String): Int = {
     val fields = str.split(",")
     val format = new java.text.SimpleDateFormat("MM-dd-yyyy")
     val today = format.format(Calendar.getInstance().getTime()).toString()
@@ -53,7 +53,7 @@ object VotingSystem {
     val oldDate = LocalDate.parse(startDate, formatter)
     val currentDate = today
     val newDate = LocalDate.parse(currentDate, formatter)
-    return newDate.toEpochDay() - oldDate.toEpochDay()
+    return (newDate.toEpochDay() - oldDate.toEpochDay()).toInt()
   }
 
 //  def prepareData(str: String): SimpleDateFormat = {
@@ -66,12 +66,15 @@ object VotingSystem {
 
   def patientAttributes(str: String): Patient = {
     val fields = str.split(",")
-    return Patient(fields(0).substring(0, fields(0).length).toInt, fields(1), fields(2).substring(0, fields(2).length), fields(3).substring(0, fields(3).length), fields(4).substring(0, fields(4).length), fields(5).substring(0, fields(5).length))
+    return Patient(fields(0).substring(0, fields(0).length).toInt, fields(1).substring(0, fields(1).length), fields(2).substring(0, fields(2).length), fields(3).substring(0, fields(3).length), fields(4).substring(0, fields(4).length), fields(5).substring(0, fields(5).length), calculateAge(fields(1).substring(0, fields(1).length)), ageGroup(fields(1).substring(0, fields(1).length)))
   }
 
   def main(args: Array[String]) {
     import Session.spark.implicits._
-    val patientFile  = Session.spark.read.textFile("patients.csv").map(patientAttributes)
+    val patientFile  = Session.spark.read.textFile("patients.csv")
+    patientFile.count()
+
+    val patient_demographics = patientFile.filter(v => !(v._1 contains "patient_id")).map(v => patientAttributes(v))
 //    val ballotboxobj = new BallotBox(ballotBoxDS)
 
 //    Session.spark.newSession()

@@ -2,7 +2,7 @@
   * Represents a Patient object associated with a real medical patient
   * 
   */
-case class Patient(patientId: Int, DOB: String, gender: String, martialStatus: String, smokingStatus: String, city: String) {
+case class Patient(patientId: Int, DOB: String, gender: String, martialStatus: String, smokingStatus: String, city: String, age: Int, ageGroup: String) {
 
   def readId(): Int = {
     return patientId;
@@ -26,5 +26,13 @@ case class Patient(patientId: Int, DOB: String, gender: String, martialStatus: S
 
   def readCity(): String = {
     return city
+  }
+
+  def readAge(): Int = {
+    return age
+  }
+
+  def readAgeGroup(): Int = {
+    return ageGroup
   }
 }
