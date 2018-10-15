@@ -4,7 +4,7 @@ import java.util.{Calendar, Date}
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-import VotingSystem.parseBallotBox
+// import VotingSystem.parseBallotBox
 
 object Session {
   val spark = SparkSession.builder.appName("Voting System").getOrCreate()
@@ -16,37 +16,38 @@ object VotingSystem {
   //$SPARK_HOME/bin/spark-submit   --class "HealthCareSystem"   --master local[4]   target/scala-2.11/health-care-system_2.11-1.0.jar
 
   def ageGroup(age: String): String = {
-    if (age < 10) {
-      return ‘0-10’
+    val ageInt = age.toInt
+    if (ageInt < 10) {
+      return "0-10"
     }
-    else if (age < 20) {
-      return ’10-20′
+    else if (ageInt < 20) {
+      return "10-20"
     }
-    else if (age < 30) {
-      return ’20-30′
+    else if (ageInt < 30) {
+      return "20-30"
     }
-    else if (age < 40) {
-      return ’30-40′
+    else if (ageInt < 40) {
+      return "30-40"
     }
-    else if (age < 50) {
-      return ’40-50′
+    else if (ageInt < 50) {
+      return "40-50"
     }
-    else if (age < 60) {
-      return ’50-60′
+    else if (ageInt < 60) {
+      return "50-60"
     }
-    else if (age < 70) {
-      return ’60-70′
+    else if (ageInt < 70) {
+      return "60-70"
     }
-    else if (age < 80) {
-      return ’70-80′
+    else if (ageInt < 80) {
+      return "70-80"
     }
     else {
-      return ’80+’
+      return "80+"
     }
   }
 
   def calculateAge(born: String): Int = {
-    val fields = str.split(",")
+    val fields = born.split(",")
     val format = new java.text.SimpleDateFormat("MM-dd-yyyy")
     val today = format.format(Calendar.getInstance().getTime()).toString()
 
@@ -55,7 +56,7 @@ object VotingSystem {
     val oldDate = LocalDate.parse(startDate, formatter)
     val currentDate = today
     val newDate = LocalDate.parse(currentDate, formatter)
-    return (newDate.toEpochDay() - oldDate.toEpochDay()).toInt()
+    return (newDate.toEpochDay() - oldDate.toEpochDay()).toInt
   }
 
 //  def prepareData(str: String): SimpleDateFormat = {
@@ -74,14 +75,14 @@ object VotingSystem {
   def main(args: Array[String]) {
     import Session.spark.implicits._
 
-    val patientFile  = Session.spark.read.textFile("patients.csv")
+    var patientFile  = Session.spark.read.textFile("patients.csv")
     patientFile.count()
 
     // SCENARIO 1
     val patient_demographics = patientFile.filter(v => !(v._1 contains "patient_id")).map(v => patientAttributes(v))
 
     // SCENARIO 2
-    val patientFile  = Session.spark.read.textFile("patients.csv").map(patientAttributes())
+    patientFile  = Session.spark.read.textFile("patients.csv").map(patientAttributes())
 
     // 1. Find the distribution of male and female patients
     val patientGender = patientFile.map(v => (v.readGender(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
