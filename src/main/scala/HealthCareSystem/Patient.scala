@@ -32,7 +32,7 @@ case class Patient(patientId: Int, DOB: String, gender: String, martialStatus: S
     return age
   }
 
-  def readAgeGroup(): Int = {
+  def readAgeGroup(): String = {
     return ageGroup
   }
 }

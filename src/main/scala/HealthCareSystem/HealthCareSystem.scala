@@ -4,13 +4,11 @@ import java.util.{Calendar, Date}
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-// import VotingSystem.parseBallotBox
-
-object Session {
+object SessionHealthCare {
   val spark = SparkSession.builder.appName("Voting System").getOrCreate()
 }
 
-object VotingSystem {
+object HealthCareSystem {
   //Command needed to run
   //export SPARK_HOME=/usr/local/Cellar/apache-spark/2.3.1/libexec
   //$SPARK_HOME/bin/spark-submit   --class "HealthCareSystem"   --master local[4]   target/scala-2.11/health-care-system_2.11-1.0.jar
@@ -75,14 +73,14 @@ object VotingSystem {
   def main(args: Array[String]) {
     import Session.spark.implicits._
 
-    var patientFile  = Session.spark.read.textFile("patients.csv")
-    patientFile.count()
+    var patientFileInitial  = Session.spark.read.textFile("patients.csv")
+    patientFileInitial.count()
 
     // SCENARIO 1
-    val patient_demographics = patientFile.filter(v => !(v._1 contains "patient_id")).map(v => patientAttributes(v))
+    val patient_demographics = patientFileInitial.map(patientAttributes).as[Patient]
 
     // SCENARIO 2
-    patientFile  = Session.spark.read.textFile("patients.csv").map(patientAttributes())
+    val patientFile  = Session.spark.read.textFile("patients.csv").map(patientAttributes)
 
     // 1. Find the distribution of male and female patients
     val patientGender = patientFile.map(v => (v.readGender(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
@@ -99,7 +97,7 @@ object VotingSystem {
     // 4. Find top 5 cities from where we have most number of patients with patient frequency
     import org.apache.spark.sql.functions.countDistinct
     val patientCityWise = patientFile.toDF().agg(countDistinct("city")).head(5)
-    patientCityWise.show()
+    println(patientCityWise)
 
     // 5. Find distribution smoking_status/smoking habit
     val patientSmokingWise = patientFile.map(v => (v.readSmokingStatus(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
