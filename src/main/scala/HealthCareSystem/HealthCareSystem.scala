@@ -68,7 +68,7 @@ object HealthCareSystem {
   def patientAttributes(str: String): Patient = {
     // val fields = str.split(",")
      val cols = str.split(",")
-    println(Patient(cols(0).toInt, cols(1), cols(2), cols(3), cols(4), cols(5), cols(6).toInt, cols(7)))
+    // println(Patient(cols(0).toInt, cols(1), cols(2), cols(3), cols(4), cols(5), cols(6).toInt, cols(7)))
     return Patient(cols(0).toInt, cols(1), cols(2), cols(3), cols(4), cols(5), cols(6).toInt, cols(7))
   }
 
@@ -76,7 +76,7 @@ object HealthCareSystem {
     import Session.spark.implicits._
 
     var patientFileInitial  = Session.spark.read.textFile("patients.csv")
-    patientFileInitial.count()
+    println("Patient count: " + patientFileInitial.count())
 
     // SCENARIO 1
     val patient_demographics = patientFileInitial.map(patientAttributes).as[Patient]
@@ -86,20 +86,25 @@ object HealthCareSystem {
 
     // 1. Find the distribution of male and female patients
     val patientGender = patientFile.map(v => (v.readGender(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    println("Gender types: " + patientGender.count())
     patientGender.show()
+    
 
     // 2. Find distribution for married status
     val patientMarriedStatus = patientFile.map(v => (v.readMartialStatus(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    println("Martial Status types: " + patientMarriedStatus.count())
     patientMarriedStatus.show()
 
     // 3. Find distribution for different age groups
     val patientAgeGroupWise = patientFile.map(v => (v.readAgeGroup(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
+    println("Age group types: " + patientAgeGroupWise.count())
     patientAgeGroupWise.show()
 
     // 4. Find top 5 cities from where we have most number of patients with patient frequency
     import org.apache.spark.sql.functions.countDistinct
-    val patientCityWise = patientFile.toDF().agg(countDistinct("city")).head(5)
-    println(patientCityWise)
+    val patientCityWise = patientFile.toDF().agg(countDistinct($"city")).head(5)
+    println("Number of distinct cities: ")
+    patientCityWise.foreach(println)
 
     // 5. Find distribution smoking_status/smoking habit
     val patientSmokingWise = patientFile.map(v => (v.readSmokingStatus(), 1)).groupByKey(_._1).reduceGroups((a, b) => (a._1, a._2 + b._2)).map(_._2)
