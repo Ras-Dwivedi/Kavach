@@ -1,5 +1,5 @@
 
-name := "Voting System"
+name := "Health Care System"
 
 version := "1.0"
 

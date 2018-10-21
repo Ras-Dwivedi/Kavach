@@ -66,8 +66,10 @@ object HealthCareSystem {
 //  }
 
   def patientAttributes(str: String): Patient = {
-    val fields = str.split(",")
-    return Patient(fields(0).substring(0, fields(0).length).toInt, fields(1).substring(0, fields(1).length), fields(2).substring(0, fields(2).length), fields(3).substring(0, fields(3).length), fields(4).substring(0, fields(4).length), fields(5).substring(0, fields(5).length), calculateAge(fields(1).substring(0, fields(1).length)), ageGroup(fields(1).substring(0, fields(1).length)))
+    // val fields = str.split(",")
+     val cols = str.split(",")
+    println(Patient(cols(0).toInt, cols(1), cols(2), cols(3), cols(4), cols(5), cols(6).toInt, cols(7)))
+    return Patient(cols(0).toInt, cols(1), cols(2), cols(3), cols(4), cols(5), cols(6).toInt, cols(7))
   }
 
   def main(args: Array[String]) {
