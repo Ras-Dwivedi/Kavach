@@ -11,6 +11,10 @@ import org.apache.spark.ml.feature.StringIndexer
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.sql.functions._
 
+//Command needed to run
+//export SPARK_HOME=/usr/local/Cellar/apache-spark/2.3.1/libexec
+//$SPARK_HOME/bin/spark-submit   --class "Cancer"   --master local[4]   target/scala-2.11/health-care-system_2.11-1.0.jar
+
 /*
  * https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Original)
  * Array(1000025,5,1,1,1,2,1,3,1,1,2)
@@ -51,48 +55,50 @@ object Cancer {
     import sqlContext._
 
     //  val rdd = sc.textFile("wdbc.data")
-    val rdd = sc.textFile("data/wbcd.csv")
+    val rdd = sc.textFile("wbcd.csv")
     val obsRDD = parseRDD(rdd).map(parseObs)
 
     val obsDF = obsRDD.toDF().cache()
     val featureCols = Array("thickness", "size", "shape", "madh", "epsize", "bnuc", "bchrom", "nNuc", "mit")
     val assembler = new VectorAssembler().setInputCols(featureCols).setOutputCol("features")
     val df2 = assembler.transform(obsDF)
-
     val labelIndexer = new StringIndexer().setInputCol("clas").setOutputCol("label")
     val df3 = labelIndexer.fit(df2).transform(df2)
-
+    df3.show()
     val splitSeed = 5043
     val Array(trainingData, testData) = df3.randomSplit(Array(0.7, 0.3), splitSeed)
+
 
     val lr = new LogisticRegression().setMaxIter(10).setRegParam(0.3).setElasticNetParam(0.8)
     val model = lr.fit(trainingData)
 
     val predictions = model.transform(testData)
 
-    predictions.select("clas", "label", "prediction").show(5)
+    predictions.select("clas", "label", "prediction").show(100)
 
     val trainingSummary = model.summary
     val objectiveHistory = trainingSummary.objectiveHistory
     objectiveHistory.foreach(loss => println(loss))
 
-    val binarySummary = trainingSummary.asInstanceOf[BinaryLogisticRegressionSummary]
-
-    // Obtain the receiver-operating characteristic as a dataframe and areaUnderROC.
-    val roc = binarySummary.roc
-    roc.show()
-    println(binarySummary.areaUnderROC)
-
-    // Set the model threshold to maximize F-Measure
-    val fMeasure = binarySummary.fMeasureByThreshold
-    val fm = fMeasure.col("F-Measure")
-    val maxFMeasure = fMeasure.select(max("F-Measure")).head().getDouble(0)
-    val bestThreshold = fMeasure.where($"F-Measure" === maxFMeasure).select("threshold").head().getDouble(0)
-    model.setThreshold(bestThreshold)
+//    THIS PART DOES NOT WORK WITH SPARK 2.3
+//    val binarySummary = trainingSummary.asInstanceOf[BinaryLogisticRegressionSummary]
+//    // Obtain the receiver-operating characteristic as a dataframe and areaUnderROC.
+//    val roc = binarySummary.roc
+//    roc.show()
+//    println(binarySummary.areaUnderROC)
+//    // Set the model threshold to maximize F-Measure
+//    val fMeasure = binarySummary.fMeasureByThreshold
+//    val fm = fMeasure.col("F-Measure")
+//    val maxFMeasure = fMeasure.select(max("F-Measure")).head().getDouble(0)
+//    val bestThreshold = fMeasure.where($"F-Measure" === maxFMeasure).select("threshold").head().getDouble(0)
+//    model.setThreshold(bestThreshold)
 
     val evaluator = new BinaryClassificationEvaluator().setLabelCol("label")
 
     val accuracy = evaluator.evaluate(predictions)
+    print("MODEL ACCURACY:\n")
+    print(accuracy)
+    print("\n")
 
   }
 }
