@@ -14,27 +14,27 @@ object VotingSystem {
     Vote(fields(0).substring(1, fields(0).length).toInt, fields(1).toInt, fields(2).substring(0, fields(2).length - 1))
   }
 
-  def main(args: Array[String]) {
-    import Session.spark.implicits._
-    val ballotBoxDS  = Session.spark.read.textFile("ballotbox.txt").map(parseBallotBox).as[Vote]
-    val ballotboxobj = new BallotBox(ballotBoxDS)
+//   def main(args: Array[String]) {
+//     import Session.spark.implicits._
+//     val ballotBoxDS  = Session.spark.read.textFile("ballotbox.txt").map(parseBallotBox).as[Vote]
+//     val ballotboxobj = new BallotBox(ballotBoxDS)
 
-    Session.spark.newSession()
-    import Session.spark.implicits._
-    // ballotboxobj.removeDuplicates()
-    //    ballotboxobj.addVote(vote)
-    //    ballotboxobj.anonVote()
-        ballotboxobj.generateResults()
-    //    ballotboxobj.checkVote(211)
-    Session.spark.stop()
-//    val vote = new Vote(1234, 120, "b")
-//    println("Original State")
-//    vote.printState()
-//    println("State After readVote")
-//    vote.readVote()
-//    vote.printState()
-//    println("State After anonVote")
-//    vote.anonVote()
-//    vote.printState()
-  }
+//     Session.spark.newSession()
+//     import Session.spark.implicits._
+//     // ballotboxobj.removeDuplicates()
+//     //    ballotboxobj.addVote(vote)
+//     //    ballotboxobj.anonVote()
+//         ballotboxobj.generateResults()
+//     //    ballotboxobj.checkVote(211)
+//     Session.spark.stop()
+// //    val vote = new Vote(1234, 120, "b")
+// //    println("Original State")
+// //    vote.printState()
+// //    println("State After readVote")
+// //    vote.readVote()
+// //    vote.printState()
+// //    println("State After anonVote")
+// //    vote.anonVote()
+// //    vote.printState()
+//   }
 }
