@@ -14,27 +14,10 @@ case object True extends Expression
 case class Principal (v : String)
 case class Proposition (v: String) extends Expression
 
-case class Says (P: Principal, s: Expression) extends Expression {
-    val v = "Says"
-    val left: Principal = P
-    val right: Expression = s
-}
-case class And(a: Expression, b: Expression) extends Expression {
-    val v = "AND"
-    val left: Expression = a
-    val right: Expression = b
-}
-
-case class Or(a: Expression, b: Expression) extends Expression {
-    val v = "OR"
-    val left: Expression = a
-    val right: Expression = b
-}
-case class Implies(a: Expression, b: Expression) extends Expression {
-    val v = "IMPLIES"
-    val left: Expression= a
-    val right: Expression= b
-}
+case class Says (P: Principal, s: Expression) extends Expression 
+case class And(a: Expression, b: Expression) extends Expression 
+case class Or(a: Expression, b: Expression) extends Expression 
+case class Implies(a: Expression, b: Expression) extends Expression
 
 
 //each case class of this class represent a one step Derivation 
@@ -61,74 +44,87 @@ case class Lam(d: Derivation, s1: Expression, s2: Expression) extends Derivation
 }
 
 case class App(d: Derivation, s1:Implies) extends Derivation {
-    if(!(d.st == s1 && d.ctx.contains(s1.left))) {
+    if(!(d.st == s1 && d.ctx.contains(s1.a))) {
         throw InvalidDerivationException()
     }
     override val ctx = d.ctx
-    override val st = s1.right
+    override val st = s1.b
 }
 
-/*
 
 
 case class Pair(d1: Derivation, d2: Derivation) extends Derivation{
-    if (d1.ctx==d2.ctx) { 
-        ctx = d1.ctx    
-        st = AND(d1.st, d2.st)
-    }
+    if (!(d1.ctx==d2.ctx)){
+        throw InvalidDerivationException()
+        }
+
+        override val ctx = d1.ctx    
+        override val st = And(d1.st, d2.st)
 }
 
 
 case class Proj1(d: Derivation, s: And) extends Derivation{
-    if (d.st==s) {
-        ctx= d.ctx
-        st=s.left
+    if (!(d.st==s)){
+        throw InvalidDerivationException()
     }
+       override val ctx= d.ctx
+        override val st=s.a
 }
 
 case class Proj2(d: Derivation, s: And) extends Derivation{
-    if (d.st==s) {
-        ctx= d.ctx
-        st=s.right
+    if (!(d.st==s)){
+        throw InvalidDerivationException()
     }
-}
-
-case class Inj1(d: Derivation, s: And) extends Derivation{
-        ctx= d.ctx
-        st=Or(d.st, s)
+       override val ctx= d.ctx
+        override val st=s.b
 }
 
 
-case class Inj2(d: Derivation, s: And) extends Derivation{
-        ctx= d.ctx
-        st=Or(s, d.st)
+case class Inj1(d: Derivation, s: Expression) extends Derivation{
+        override val ctx= d.ctx
+        override val st=Or(d.st, s)
+}
+
+case class Inj2(d: Derivation, s: Expression) extends Derivation{
+        override val ctx= d.ctx
+        override val st=Or(s, d.st)
 }
 
 
 case class UnitM(d: Derivation, P: Principal) extends Derivation{
-        ctx= d.ctx
-        st=Says(P, d.st)
+        override val ctx= d.ctx
+        override val st=Says(P, d.st)
 }
+
 
 case class Case (d1: Derivation, d2: Derivation, d3: Derivation, s: Expression){
-    assert (d1.context == d2.context - d1.st.left)
-    assert (d1.context == d3.context - d1.st.right)
-    assert(d1.st.v=="OR")
-    assert(d2.st == d3.st)
-    ctx = d1.ctx
-    st = d2.xt
+    d1.st match {
+        case Or(a,b) => {assert (d1.ctx == d2.ctx - a);
+                                 assert (d1.ctx == d3.ctx - b);
+                                assert(d2.st == d3.st);
+                     }
+        case _ =>  throw InvalidDerivationException()                 
+    }
 }
+
 
 case class Bindm(d1: Derivation, d2: Derivation) extends Derivation{
-    assert(d1.st.v=="Says")
-    assert(d2.st.v=="Says")
-    asser(d1.st.left == d2.st.left)
-    assert(d1.ctx == d2.ctx - d1.st.right)
-    ctx = d1.ctx
-    st= d2.st
+    d1.st match{
+        case Says(p1,s1) => {d2.st match {
+                                case Says(p2,s2) => {assert(p1==p2);
+                                                    assert(d1.ctx == d2.ctx - s1)
+                                                   }
+                                case _ => throw InvalidDerivationException()
+                                       }
+                           }
+        case _ => throw InvalidDerivationException() 
+    }
+
+    override val ctx = d1.ctx
+    override val st= d2.st
 }
 
-*/
+
 
 // this does the reading part
 object AST {
