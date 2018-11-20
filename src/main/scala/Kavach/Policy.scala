@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package edu.berkeley.cs.rise.opaque.kavach
+package kavach
 
 /**
  * This is the exception raised when the policy is not followed.

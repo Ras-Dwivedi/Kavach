@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package edu.berkeley.cs.rise.opaque.kavach.tests
+package kavach.tests
 
-import edu.berkeley.cs.rise.opaque.kavach._
+import kavach._
 
 object HelloPolicies
 {
