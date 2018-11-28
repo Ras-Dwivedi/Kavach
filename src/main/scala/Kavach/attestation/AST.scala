@@ -31,7 +31,7 @@ case class Var (ctx1: Set[Expression], s:Expression) extends Derivation {
     override val st = s
 }
 
-case class Unit (ctx: Set[Expression]) extends Derivation{
+case class Unit_true (ctx: Set[Expression]) extends Derivation{
     override val st = True
 }
 
@@ -127,18 +127,18 @@ case class Bindm(d1: Derivation, d2: Derivation) extends Derivation{
 
 
 // this does the reading part
-object AST {
-    def main(args: Array[String]) {
-        val a = Proposition("a")
-        val b = Proposition("b")
-        val impl = Implies(a, b)
-        val ctx : Set[Expression] = Set(a)
+// object AST {
+//     def main(args: Array[String]) {
+//         val a = Proposition("a")
+//         val b = Proposition("b")
+//         val impl = Implies(a, b)
+//         val ctx : Set[Expression] = Set(a)
 
-        val deriv = Var(ctx, impl)
-        val proof = App(deriv, impl)
+//         val deriv = Var(ctx, impl)
+//         val proof = App(deriv, impl)
 
-        println(proof.toString())
-        println("hello, world!")
-    }
-}
+//         println(proof.toString())
+//         println("hello, world!")
+//     }
+// }
 
