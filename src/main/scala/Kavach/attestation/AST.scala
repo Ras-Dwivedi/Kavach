@@ -138,7 +138,7 @@ def isFree(s: Expression, x):Boolean = {
         case And(s1,s2)      => isFree(s1,x) && isFree(s2,x)  
         case Or(s1,s2)       =>  isFree(s1,x) && isFree(s2,x)
         case Implies(s1,s2)  => isFree(s1,x) && isFree(s2,x)   
-        case ForAll(s1,y)    => if ( y== x) false else isFree(s1)
+        case ForAll(y,s1)    => if ( y== x) false else isFree(s1)
         case Proposition(s1) => True
         case _ => true    
     }
@@ -154,7 +154,39 @@ def isFree(ctx: Set[Expression], x) = {
     }
     retrun flag
 }
+// This version of overloaded function return whethere t is free for x in s. but here t is Proposition
+def isFree(s:Expression, t: Proposition, x:Proposition):Boolean  = {
+    val v = s match {
+        case Says(P,s1)      => isFree(s1,t,x)
+        case And(s1,s2)      => isFree(s1,t,x) && isFree(s2,t,x)  
+        case Or(s1,s2)       => isFree(s1,t,x) && isFree(s2,t,x)
+        case Implies(s1,s2)  => isFree(s1,t,x) && isFree(s2,t,x)   
+        case ForAll(y,s1)    => if ( y== x) !isThere(s1,t) else isFree(s1,t,x)
+        case Proposition(s1) => True
+        case _ => true    
+    }
+}
+def isFree(s:Expression, t:Expression, x: Proposition): Boolean = {
+    var flag = true
+    val variables = variablesIn(t)
+    for(v <- variables) {
+        flag = flag && isFree(s,v,x)
+    } 
+    return flag
+}
 
+def isThere(s:Expression, x: Proposition):Boolean = {
+    val v = s match {
+        case Says(P,s1)      => isThere(s1,x)
+        case And(s1,s2)      => isThere(s1,x) ||isThere(s2,x)  
+        case Or(s1,s2)       =>  isThere(s1,x) || isThere(s2,x)
+        case Implies(s1,s2)  => isThere(s1,x) ||isThere(s2,x)   
+        case ForAll(y,s1)    => isThere(s1)
+        case Proposition(t)  => if(t==x) true else false  
+        case _ => false 
+    }
+
+    retrun v
 // the two overloaded function finds out the variables in a context, so that one can generate the list of not free variabls in the context
 def variablesIn (s:Expression): Set[Proposition] ={
     var v = Set[Proposition]() //declared empty set
@@ -190,12 +222,15 @@ def not_Free (ctx: Set[Expression]): Set[Proposition]= {
 
 
 
-case class TLam(d1: Derivation, x: Proposition) extends Derivation{
-    override val ctx = d1.ctx
-    override val st = ForAll(x, d1.st)
-}
 
-case class TLam(d1: TLam, t: Proposition) extends Derivation{
+case class TLam(d: Derivation, x: Proposition) extends Derivation{
+    if(isFree(d.ctx,x)) throw InvalidDerivationException()
+    override val ctx = d.ctx
+    override val st = ForAll(x, d.st)
+}
+// T Lam should be fine here. Problem is how to find ifFree(s,t,x). recursuve rules are same. so no problem there. once you find forall x you need to then set flag1 true, and then if you find Proposition as t then return false
+
+case class Tapp(d1: TLam, t: Proposition) extends Derivation{
     override val ctx= d1.ctx
     override st = substitute (d1, t, x)
 }
@@ -207,29 +242,19 @@ case class TLam(d1: TLam, t: Proposition) extends Derivation{
 
 
 
-def substitute(d: Expression, t: Proposition, x: Proposition)={
-    // For now assume that we can replace x by t. Checking this validity is different matter :-)
-    // Do we need to do substitution in a derivation or in a Expression? I think it is Expression
-    val v1 = d1 match {
+def substitute(d: Expression, t: Expression, x: Proposition): Expression={
+    if(!isFree(d,t,x)) InvalidDerivationException()
+    val v = d1 match {
         case Says(P, s)       => Says(P, substitute (s,t,x))
         case And(s1,s2)       => And(substitute(s1,t,x), substitute(s2,t,x))
         case Or(s1,s2)        => Or(substitute(s1,t,x), substitute(s2,t,x))
         case Implies(s1,s2)   => Implies(substitute(s1,t,x), substitute(s2,t,x)) 
-       // case ForAll ??  
-        1. when do we need the substitution. Do we need to obtain certain formula by replacing an Expression by another expression, or do we need to remove the quantifier to get the instance of a formula
+        case ForAll(y,s)      => ForAll(y,substitute(s,t,x))
+        case Proposition(y)   => if (y==x) t else y  
     }
+    return v
 }
 
-def substitute(d: Proposition, t: Proposition, x: Proposition)={
-    // For now assume that we can replace x by t. Checking this validity is different matter :-)
-    // Do we need to do substitution in a derivation or in a Expression? I think it is Expression
-
-    // so a term t is free for x if either there is not free  occurances of x, or in every free occurances of x, there is no quanfier containing same terms as in t
-    val v1 = d match {
-        case d if (d==x) => t
-        case _ => d    
-    }
-}
 
 // this does the reading part
 // object AST {
