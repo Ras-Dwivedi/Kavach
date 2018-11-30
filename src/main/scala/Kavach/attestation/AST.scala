@@ -105,6 +105,8 @@ case class Case (d1: Derivation, d2: Derivation, d3: Derivation, s: Expression){
                      }
         case _ =>  throw InvalidDerivationException()                 
     }
+    override val ctx = d1.ctx
+    override val st = d3.st
 }
 
 
@@ -124,7 +126,110 @@ case class Bindm(d1: Derivation, d2: Derivation) extends Derivation{
     override val st= d2.st
 }
 
+// Todays work
+case class ForAll(x: Proposition, s: Expression) extends Expression
 
+// you must be able to add ForAll int the context without invoking these rules. This could be done via Var then you must be able check which variables are not free  in the context, (do it for a Expression and the iterate over the context) and only for those variables you can do this quantification
+
+// This function checks whether x is free in s
+def isFree(s: Expression, x):Boolean = {
+    val v = s match {
+        case Says(P,s1)      => isFree(s1,x)
+        case And(s1,s2)      => isFree(s1,x) && isFree(s2,x)  
+        case Or(s1,s2)       =>  isFree(s1,x) && isFree(s2,x)
+        case Implies(s1,s2)  => isFree(s1,x) && isFree(s2,x)   
+        case ForAll(s1,y)    => if ( y== x) false else isFree(s1)
+        case Proposition(s1) => True
+        case _ => true    
+    }
+
+    retrun v
+}
+
+// This functions checks whether x is free in the context or not. Idea is that if for any one expression x is not free, then it is not free in the context
+def isFree(ctx: Set[Expression], x) = {
+    var flag =true
+    for (s <- ctx) {
+        flag = flag && isFree(s,x)
+    }
+    retrun flag
+}
+
+// the two overloaded function finds out the variables in a context, so that one can generate the list of not free variabls in the context
+def variablesIn (s:Expression): Set[Proposition] ={
+    var v = Set[Proposition]() //declared empty set
+    v = s match {
+        case Says(P,s1)      => variablesIn(s1)
+        case And(s1,s2)      => variablesIn(s1).++variablesIn(s2)  
+        case Or(s1,s2)       =>  variablesIn(s1).++variablesIn(s2)
+        case Implies(s1,s2)  => variablesIn(s1).++variablesIn(s2)   
+        case ForAll(s1,y)    => variablesIn(s1) + y
+        case Proposition(s1) => Set[Proposition](s1)
+        }
+}
+
+def variablesIn(ctx: Set[Expression]):Set[Proposition] = {
+    var v = Set[Expression]()
+    for (s<- ctx){
+        v = v + variablesIn(s)
+    }
+    retrun v
+}
+// This function retruns the variables not free in context ctx
+def not_Free (ctx: Set[Expression]): Set[Proposition]= {
+    var v = variablesIn(ctx)
+    var notFree = Set[Proposition]()
+    for (x <- v) {
+        var flag = isFree(ctx,x)
+        if(!flag) (notFree = notFree + x)
+    }
+    
+    retrun notFree
+
+}
+
+
+
+case class TLam(d1: Derivation, x: Proposition) extends Derivation{
+    override val ctx = d1.ctx
+    override val st = ForAll(x, d1.st)
+}
+
+case class TLam(d1: TLam, t: Proposition) extends Derivation{
+    override val ctx= d1.ctx
+    override st = substitute (d1, t, x)
+}
+
+// case class Says (P: Principal, s: Expression) extends Expression 
+// case class And(a: Expression, b: Expression) extends Expression 
+// case class Or(a: Expression, b: Expression) extends Expression 
+// case class Implies(a: Expression, b: Expression) extends Expression
+
+
+
+def substitute(d: Expression, t: Proposition, x: Proposition)={
+    // For now assume that we can replace x by t. Checking this validity is different matter :-)
+    // Do we need to do substitution in a derivation or in a Expression? I think it is Expression
+    val v1 = d1 match {
+        case Says(P, s)       => Says(P, substitute (s,t,x))
+        case And(s1,s2)       => And(substitute(s1,t,x), substitute(s2,t,x))
+        case Or(s1,s2)        => Or(substitute(s1,t,x), substitute(s2,t,x))
+        case Implies(s1,s2)   => Implies(substitute(s1,t,x), substitute(s2,t,x)) 
+       // case ForAll ??  
+        1. when do we need the substitution. Do we need to obtain certain formula by replacing an Expression by another expression, or do we need to remove the quantifier to get the instance of a formula
+    }
+}
+
+def substitute(d: Proposition, t: Proposition, x: Proposition)={
+    // For now assume that we can replace x by t. Checking this validity is different matter :-)
+    // Do we need to do substitution in a derivation or in a Expression? I think it is Expression
+
+    // so a term t is free for x if either there is not free  occurances of x, or in every free occurances of x, there is no quanfier containing same terms as in t
+    val v1 = d match {
+        case d if (d==x) => t
+        case _ => d    
+    }
+}
 
 // this does the reading part
 // object AST {
