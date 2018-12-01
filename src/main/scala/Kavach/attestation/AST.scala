@@ -97,7 +97,7 @@ case class UnitM(d: Derivation, P: Principal) extends Derivation{
 }
 
 
-case class Case (d1: Derivation, d2: Derivation, d3: Derivation, s: Expression){
+case class Case (d1: Derivation, d2: Derivation, d3: Derivation, s: Expression) extends Derivation{
     d1.st match {
         case Or(a,b) => {assert (d1.ctx == d2.ctx - a);
                                  assert (d1.ctx == d3.ctx - b);
@@ -132,40 +132,44 @@ case class ForAll(x: Proposition, s: Expression) extends Expression
 // you must be able to add ForAll int the context without invoking these rules. This could be done via Var then you must be able check which variables are not free  in the context, (do it for a Expression and the iterate over the context) and only for those variables you can do this quantification
 
 // This function checks whether x is free in s
-def isFree(s: Expression, x):Boolean = {
-    val v = s match {
-        case Says(P,s1)      => isFree(s1,x)
+object AST {
+def isFree(s: Expression, x: Proposition): Boolean = {
+    val flag : Boolean = s match {
+        case Says(p,s1)      => isFree(s1,x)
         case And(s1,s2)      => isFree(s1,x) && isFree(s2,x)  
         case Or(s1,s2)       =>  isFree(s1,x) && isFree(s2,x)
         case Implies(s1,s2)  => isFree(s1,x) && isFree(s2,x)   
-        case ForAll(y,s1)    => if ( y== x) false else isFree(s1)
-        case Proposition(s1) => True
+        case ForAll(y,s1)    => if (y== x) false else isFree(s1,x) // there is error in this definition. What about the cases where there is forall x, but no x under that, and in that case it should be free to substitute
+        case Proposition(s1) => true
         case _ => true    
     }
 
-    retrun v
+    return flag
 }
 
+
 // This functions checks whether x is free in the context or not. Idea is that if for any one expression x is not free, then it is not free in the context
-def isFree(ctx: Set[Expression], x) = {
-    var flag =true
+def isFree(ctx: Set[Expression], x:Proposition): Boolean = {
+    var flag: Boolean =true
     for (s <- ctx) {
         flag = flag && isFree(s,x)
     }
-    retrun flag
+    return flag
 }
 // This version of overloaded function return whethere t is free for x in s. but here t is Proposition
 def isFree(s:Expression, t: Proposition, x:Proposition):Boolean  = {
-    val v = s match {
-        case Says(P,s1)      => isFree(s1,t,x)
+    val flag:Boolean = s match {
+        case Says(p,s1)      => isFree(s1,t,x)
         case And(s1,s2)      => isFree(s1,t,x) && isFree(s2,t,x)  
         case Or(s1,s2)       => isFree(s1,t,x) && isFree(s2,t,x)
-        case Implies(s1,s2)  => isFree(s1,t,x) && isFree(s2,t,x)   
+        case Implies(s1,s2)  => isFree(s1,t,x) && isFree(s2,t,x)  
         case ForAll(y,s1)    => if ( y== x) !isThere(s1,t) else isFree(s1,t,x)
-        case Proposition(s1) => True
+        case Proposition(s1) => true
         case _ => true    
     }
+    return flag
 }
+
 def isFree(s:Expression, t:Expression, x: Proposition): Boolean = {
     var flag = true
     val variables = variablesIn(t)
@@ -176,36 +180,39 @@ def isFree(s:Expression, t:Expression, x: Proposition): Boolean = {
 }
 
 def isThere(s:Expression, x: Proposition):Boolean = {
-    val v = s match {
-        case Says(P,s1)      => isThere(s1,x)
+    val flag = s match {
+        case Says(p,s1)      => isThere(s1,x)
         case And(s1,s2)      => isThere(s1,x) ||isThere(s2,x)  
         case Or(s1,s2)       =>  isThere(s1,x) || isThere(s2,x)
         case Implies(s1,s2)  => isThere(s1,x) ||isThere(s2,x)   
-        case ForAll(y,s1)    => isThere(s1)
+        case ForAll(y,s1)    => isThere(s1,x)
         case Proposition(t)  => if(t==x) true else false  
         case _ => false 
     }
+    return flag
+}
 
-    retrun v
-// the two overloaded function finds out the variables in a context, so that one can generate the list of not free variabls in the context
+//     retrun v
+// // the two overloaded function finds out the variables in a context, so that one can generate the list of not free variabls in the context
 def variablesIn (s:Expression): Set[Proposition] ={
-    var v = Set[Proposition]() //declared empty set
-    v = s match {
-        case Says(P,s1)      => variablesIn(s1)
-        case And(s1,s2)      => variablesIn(s1).++variablesIn(s2)  
-        case Or(s1,s2)       =>  variablesIn(s1).++variablesIn(s2)
-        case Implies(s1,s2)  => variablesIn(s1).++variablesIn(s2)   
-        case ForAll(s1,y)    => variablesIn(s1) + y
-        case Proposition(s1) => Set[Proposition](s1)
+    var v = s match {
+        case Says(p,s1)      => variablesIn(s1)
+        case And(s1,s2)      => variablesIn(s1).++(variablesIn(s2))
+        case Or(s1,s2)       =>  variablesIn(s1).++(variablesIn(s2))
+        case Implies(s1,s2)  => variablesIn(s1).++(variablesIn(s2))
+        case ForAll(y,s1)    => variablesIn(s1) + y
+        case Proposition(s1) => Set[Proposition](Proposition(s1))
+        case _               => Set[Proposition]()  
         }
+    return v    
 }
 
 def variablesIn(ctx: Set[Expression]):Set[Proposition] = {
-    var v = Set[Expression]()
+    var v = Set[Proposition]()
     for (s<- ctx){
-        v = v + variablesIn(s)
+        v = v.++(variablesIn(s))
     }
-    retrun v
+    return v
 }
 // This function retruns the variables not free in context ctx
 def not_Free (ctx: Set[Expression]): Set[Proposition]= {
@@ -216,7 +223,7 @@ def not_Free (ctx: Set[Expression]): Set[Proposition]= {
         if(!flag) (notFree = notFree + x)
     }
     
-    retrun notFree
+    return notFree
 
 }
 
@@ -230,15 +237,15 @@ case class TLam(d: Derivation, x: Proposition) extends Derivation{
 }
 // T Lam should be fine here. Problem is how to find ifFree(s,t,x). recursuve rules are same. so no problem there. once you find forall x you need to then set flag1 true, and then if you find Proposition as t then return false
 
-case class Tapp(d1: TLam, t: Proposition) extends Derivation{
-    override val ctx= d1.ctx
-    override st = substitute (d1, t, x)
+case class Tapp(d: TLam, t: Proposition) extends Derivation{
+    override val ctx= d.ctx
+    override val st = substitute (d.st, t, d.x)
 }
 
-// case class Says (P: Principal, s: Expression) extends Expression 
-// case class And(a: Expression, b: Expression) extends Expression 
-// case class Or(a: Expression, b: Expression) extends Expression 
-// case class Implies(a: Expression, b: Expression) extends Expression
+// // case class Says (P: Principal, s: Expression) extends Expression 
+// // case class And(a: Expression, b: Expression) extends Expression 
+// // case class Or(a: Expression, b: Expression) extends Expression 
+// // case class Implies(a: Expression, b: Expression) extends Expression
 
 
 
@@ -257,18 +264,18 @@ def substitute(d: Expression, t: Expression, x: Proposition): Expression={
 
 
 // this does the reading part
-// object AST {
-//     def main(args: Array[String]) {
-//         val a = Proposition("a")
-//         val b = Proposition("b")
-//         val impl = Implies(a, b)
-//         val ctx : Set[Expression] = Set(a)
 
-//         val deriv = Var(ctx, impl)
-//         val proof = App(deriv, impl)
+    def main(args: Array[String]) {
+        val a = Proposition("a")
+        val b = Proposition("b")
+        val impl = Implies(a, b)
+        val ctx : Set[Expression] = Set(a)
 
-//         println(proof.toString())
-//         println("hello, world!")
-//     }
-// }
+        val deriv = Var(ctx, impl)
+        val proof = App(deriv, impl)
+
+        println(proof.toString())
+        println("hello, world!")
+    }
+}
 
