@@ -1,4 +1,5 @@
 package kavach.attestation
+import kavach.attestation.definitions._
 
 import scala.io.Source
 
@@ -18,6 +19,7 @@ case class Says (P: Principal, s: Expression) extends Expression
 case class And(a: Expression, b: Expression) extends Expression 
 case class Or(a: Expression, b: Expression) extends Expression 
 case class Implies(a: Expression, b: Expression) extends Expression
+case class ForAll(x: Proposition, s: Expression) extends Expression
 
 
 //each case class of this class represent a one step Derivation 
@@ -126,143 +128,18 @@ case class Bindm(d1: Derivation, d2: Derivation) extends Derivation{
     override val st= d2.st
 }
 
-// Todays work
-case class ForAll(x: Proposition, s: Expression) extends Expression
-
-// you must be able to add ForAll int the context without invoking these rules. This could be done via Var then you must be able check which variables are not free  in the context, (do it for a Expression and the iterate over the context) and only for those variables you can do this quantification
-
-// This function checks whether x is free in s
-object AST {
-def isFree(s: Expression, x: Proposition): Boolean = {
-    val flag : Boolean = s match {
-        case Says(p,s1)      => isFree(s1,x)
-        case And(s1,s2)      => isFree(s1,x) && isFree(s2,x)  
-        case Or(s1,s2)       =>  isFree(s1,x) && isFree(s2,x)
-        case Implies(s1,s2)  => isFree(s1,x) && isFree(s2,x)   
-        case ForAll(y,s1)    => if (y== x) false else isFree(s1,x) // there is error in this definition. What about the cases where there is forall x, but no x under that, and in that case it should be free to substitute
-        case Proposition(s1) => true
-        case _ => true    
-    }
-
-    return flag
-}
-
-
-// This functions checks whether x is free in the context or not. Idea is that if for any one expression x is not free, then it is not free in the context
-def isFree(ctx: Set[Expression], x:Proposition): Boolean = {
-    var flag: Boolean =true
-    for (s <- ctx) {
-        flag = flag && isFree(s,x)
-    }
-    return flag
-}
-// This version of overloaded function return whethere t is free for x in s. but here t is Proposition
-def isFree(s:Expression, t: Proposition, x:Proposition):Boolean  = {
-    val flag:Boolean = s match {
-        case Says(p,s1)      => isFree(s1,t,x)
-        case And(s1,s2)      => isFree(s1,t,x) && isFree(s2,t,x)  
-        case Or(s1,s2)       => isFree(s1,t,x) && isFree(s2,t,x)
-        case Implies(s1,s2)  => isFree(s1,t,x) && isFree(s2,t,x)  
-        case ForAll(y,s1)    => if ( y== x) !isThere(s1,t) else isFree(s1,t,x)
-        case Proposition(s1) => true
-        case _ => true    
-    }
-    return flag
-}
-
-def isFree(s:Expression, t:Expression, x: Proposition): Boolean = {
-    var flag = true
-    val variables = variablesIn(t)
-    for(v <- variables) {
-        flag = flag && isFree(s,v,x)
-    } 
-    return flag
-}
-
-def isThere(s:Expression, x: Proposition):Boolean = {
-    val flag = s match {
-        case Says(p,s1)      => isThere(s1,x)
-        case And(s1,s2)      => isThere(s1,x) ||isThere(s2,x)  
-        case Or(s1,s2)       =>  isThere(s1,x) || isThere(s2,x)
-        case Implies(s1,s2)  => isThere(s1,x) ||isThere(s2,x)   
-        case ForAll(y,s1)    => isThere(s1,x)
-        case Proposition(t)  => if(t==x) true else false  
-        case _ => false 
-    }
-    return flag
-}
-
-//     retrun v
-// // the two overloaded function finds out the variables in a context, so that one can generate the list of not free variabls in the context
-def variablesIn (s:Expression): Set[Proposition] ={
-    var v = s match {
-        case Says(p,s1)      => variablesIn(s1)
-        case And(s1,s2)      => variablesIn(s1).++(variablesIn(s2))
-        case Or(s1,s2)       =>  variablesIn(s1).++(variablesIn(s2))
-        case Implies(s1,s2)  => variablesIn(s1).++(variablesIn(s2))
-        case ForAll(y,s1)    => variablesIn(s1) + y
-        case Proposition(s1) => Set[Proposition](Proposition(s1))
-        case _               => Set[Proposition]()  
-        }
-    return v    
-}
-
-def variablesIn(ctx: Set[Expression]):Set[Proposition] = {
-    var v = Set[Proposition]()
-    for (s<- ctx){
-        v = v.++(variablesIn(s))
-    }
-    return v
-}
-// This function retruns the variables not free in context ctx
-def not_Free (ctx: Set[Expression]): Set[Proposition]= {
-    var v = variablesIn(ctx)
-    var notFree = Set[Proposition]()
-    for (x <- v) {
-        var flag = isFree(ctx,x)
-        if(!flag) (notFree = notFree + x)
-    }
-    
-    return notFree
-
-}
-
-
-
-
 case class TLam(d: Derivation, x: Proposition) extends Derivation{
     if(isFree(d.ctx,x)) throw InvalidDerivationException()
     override val ctx = d.ctx
     override val st = ForAll(x, d.st)
 }
-// T Lam should be fine here. Problem is how to find ifFree(s,t,x). recursuve rules are same. so no problem there. once you find forall x you need to then set flag1 true, and then if you find Proposition as t then return false
 
 case class Tapp(d: TLam, t: Proposition) extends Derivation{
     override val ctx= d.ctx
     override val st = substitute (d.st, t, d.x)
 }
 
-// // case class Says (P: Principal, s: Expression) extends Expression 
-// // case class And(a: Expression, b: Expression) extends Expression 
-// // case class Or(a: Expression, b: Expression) extends Expression 
-// // case class Implies(a: Expression, b: Expression) extends Expression
-
-
-
-def substitute(d: Expression, t: Expression, x: Proposition): Expression={
-    if(!isFree(d,t,x)) InvalidDerivationException()
-    val v = d1 match {
-        case Says(P, s)       => Says(P, substitute (s,t,x))
-        case And(s1,s2)       => And(substitute(s1,t,x), substitute(s2,t,x))
-        case Or(s1,s2)        => Or(substitute(s1,t,x), substitute(s2,t,x))
-        case Implies(s1,s2)   => Implies(substitute(s1,t,x), substitute(s2,t,x)) 
-        case ForAll(y,s)      => ForAll(y,substitute(s,t,x))
-        case Proposition(y)   => if (y==x) t else y  
-    }
-    return v
-}
-
-
+object AST {
 // this does the reading part
 
     def main(args: Array[String]) {
