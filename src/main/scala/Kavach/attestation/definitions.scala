@@ -3,7 +3,7 @@ package kavach.attestation
 object definitions{
 	def isFree(s: Expression, x: Proposition): Boolean = {
     	val flag : Boolean = s match {
-	        case Says(p,s1)      => isFree(s1,x)
+	        case Says(p,s1,enc)      => isFree(s1,x)
 	        case And(s1,s2)      => isFree(s1,x) && isFree(s2,x)  
 	        case Or(s1,s2)       =>  isFree(s1,x) && isFree(s2,x)
 	        case Implies(s1,s2)  => isFree(s1,x) && isFree(s2,x)   
@@ -25,7 +25,7 @@ object definitions{
 // This version of overloaded function return whethere t is free for x in s. but here t is Proposition
 	def isFree(s:Expression, t: Proposition, x:Proposition):Boolean  = {
 	    val flag:Boolean = s match {
-	        case Says(p,s1)      => isFree(s1,t,x)
+	        case Says(p,s1,enc)      => isFree(s1,t,x)
 	        case And(s1,s2)      => isFree(s1,t,x) && isFree(s2,t,x)  
 	        case Or(s1,s2)       => isFree(s1,t,x) && isFree(s2,t,x)
 	        case Implies(s1,s2)  => isFree(s1,t,x) && isFree(s2,t,x)  
@@ -47,7 +47,7 @@ object definitions{
 
 	def isThere(s:Expression, x: Proposition):Boolean = {
 	    val flag = s match {
-	        case Says(p,s1)      => isThere(s1,x)
+	        case Says(p,s1,enc)      => isThere(s1,x)
 	        case And(s1,s2)      => isThere(s1,x) ||isThere(s2,x)  
 	        case Or(s1,s2)       =>  isThere(s1,x) || isThere(s2,x)
 	        case Implies(s1,s2)  => isThere(s1,x) ||isThere(s2,x)   
@@ -73,7 +73,7 @@ object definitions{
 // // the two overloaded function finds out the variables in a context, so that one can generate the list of not free variabls in the context
 	def variablesIn (s:Expression): Set[Proposition] ={
 	    var v = s match {
-	        case Says(p,s1)      => variablesIn(s1)
+	        case Says(p,s1,enc)      => variablesIn(s1)
 	        case And(s1,s2)      => variablesIn(s1).++(variablesIn(s2))
 	        case Or(s1,s2)       =>  variablesIn(s1).++(variablesIn(s2))
 	        case Implies(s1,s2)  => variablesIn(s1).++(variablesIn(s2))
@@ -97,7 +97,7 @@ object definitions{
 	def substitute(d: Expression, t: Expression, x: Proposition): Expression={
 	    if(!isFree(d,t,x)) InvalidDerivationException()
 	    val v: Expression  = d match {
-	        case Says(p, s)       => Says(p, substitute (s,t,x))
+	        case Says(p, s,enc)       => Says(p, substitute (s,t,x),enc) // this would run into problem as signature for all x is not same as signature for t
 	        case And(s1,s2)       => And(substitute(s1,t,x), substitute(s2,t,x))
 	        case Or(s1,s2)        => Or(substitute(s1,t,x), substitute(s2,t,x))
 	        case Implies(s1,s2)   => Implies(substitute(s1,t,x), substitute(s2,t,x)) 

@@ -1,5 +1,4 @@
-
-name := "Health Care System"
+name := "Logical Attestation System"
 
 version := "1.0"
 
