@@ -45,10 +45,11 @@ object WriteTestObject {
 
 		val deriv = Var(ctx, impl)
 		val proof = App(deriv, impl)
-		val P = Principal ("P")
-		val Q = Principal ("P")
-		val P_says = Says(P,c)
-		val Q_says= Says(Q,d)
+		val P = Principal ("P", "keys_P")
+		// P.sign(d)
+		// val Q = Principal ("P")
+		// val P_says = Says(P,c)
+		// val Q_says= Says(Q,d)
 
 		// Only variable we are wriing are Derivation
 		// println("from here \n\n\n\n\n\n\n")
@@ -58,7 +59,7 @@ object WriteTestObject {
 		}
 		catch{
 			case e:Exception => println(e)
-				println("returned from this file")
+				// println("returned from this file")
 		}
 		 // oos.close()
 		// write_object(proof2)

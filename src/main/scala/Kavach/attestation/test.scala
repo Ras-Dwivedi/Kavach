@@ -8,7 +8,7 @@ object test {
 
     	def main(args: Array[String]) {
 		WriteTestObject.write(filename)
-		println(" wrting process completed, now we would read \n")
+		println(" wrting process completed, now reading \n")
 		val list = readObject.read_file(filename)
 		for(x <- list){
 			println(x)

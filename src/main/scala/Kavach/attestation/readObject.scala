@@ -18,7 +18,7 @@ object readObject {
 		   	 }
 		   	 catch{
 		   	 case e: Exception => print(e)
-		   	 		      println(" \nreached the end of the file")
+		   	 		      // println(" \nreached the end of the file")
 		   	 		      break
 		   	 }
 			}
