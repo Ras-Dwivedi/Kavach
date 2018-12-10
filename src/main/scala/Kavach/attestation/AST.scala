@@ -64,6 +64,9 @@ case class ForAll(x: Proposition, s: Expression) extends Expression
 abstract class Derivation { 
     val ctx: Set[Expression]
     val st: Expression
+    def print= {
+        println("\nContext =  "+ this.ctx+"\nStatement =     "+ this.st)
+    }
 }
 case class Var (ctx1: Set[Expression], s:Expression) extends Derivation {
     override val ctx = ctx1 + s
@@ -72,6 +75,9 @@ case class Var (ctx1: Set[Expression], s:Expression) extends Derivation {
 
 case class Unit_true (ctx: Set[Expression]) extends Derivation{
     override val st = True
+    def this (){
+        this(Set[Expression]())
+    }
 }
 
 case class Lam(d: Derivation, s1: Expression, s2: Expression) extends Derivation{
@@ -101,7 +107,16 @@ case class Pair(d1: Derivation, d2: Derivation) extends Derivation{
         override val st = And(d1.st, d2.st)
 }
 
-
+// Here use of s is redundant, and it would be better if this could be removed
+// case class Proj11(d:Derivation) extends Derivation{
+//     // val c : d.st
+//     d.st match {
+//         case And(a,b) => val d.st = a
+//         case _ => throw InvalidDerivationException() 
+//     }
+//     override val ctx = d.ctx
+//     override val  st =d.st
+// }
 case class Proj1(d: Derivation, s: And) extends Derivation{
     if (!(d.st==s)){
         throw InvalidDerivationException()
@@ -145,7 +160,7 @@ case class Case (d1: Derivation, d2: Derivation, d3: Derivation, s: Expression) 
         case _ =>  throw InvalidDerivationException()                 
     }
     override val ctx = d1.ctx
-    override val st = d3.st
+    override val st = d3.st  
 }
 
 

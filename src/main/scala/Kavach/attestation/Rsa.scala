@@ -5,6 +5,10 @@ import java.security.spec.{X509EncodedKeySpec, PKCS8EncodedKeySpec}
 import java.io._ // for writing objects
 
 object RSA{
+ final case class InvalidCipherText(
+    private val message: String = "Signature verification failed",
+    private val cause: Throwable = None.orNull)
+  extends java.lang.RuntimeException(message, cause)   
 
 val KEY_FOLDER="./key/" //This denotes the folder where Keys are stored
     def write_keys(key: KeyPair, file_private: String, file_public: String):Unit= {
@@ -45,6 +49,10 @@ def verify(publicKey:PublicKey, signedCipherTest:Array[Byte], s:Expression) : Bo
         signer.initVerify(publicKey)
         signer.update(plainText)
         signer.verify(signedCipherTest)
+        // try {signer.verify(signedCipherTest)}
+        // catch{
+        //     case _ : Throwable=> throw InvalidCipherText()
+        // }
     }    
 }
 
