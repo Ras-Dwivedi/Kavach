@@ -151,7 +151,7 @@ case class Inj2(d: Derivation, s: Expression) extends Derivation{
 // }
 
 
-case class Case (d1: Derivation, d2: Derivation, d3: Derivation, s: Expression) extends Derivation{
+case class Case (d1: Derivation, d2: Derivation, d3: Derivation) extends Derivation{
     d1.st match {
         case Or(a,b) => {assert (d1.ctx == d2.ctx - a);
                                  assert (d1.ctx == d3.ctx - b);

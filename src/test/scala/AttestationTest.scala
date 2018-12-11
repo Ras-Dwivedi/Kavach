@@ -206,6 +206,19 @@ class LogicalAttestationSpec extends FlatSpec {
     val deriv=Inj2(c,b)
     deriv.print
 }
+"Case" should "execute" in {
+    val a = Proposition("a")
+    val b = Proposition("b")
+    val c = Proposition("c")
+    val d1 = Var(Set[Expression](Implies(a,c), Implies(b,c)), Or(a,b))// derivation of a Or b
+    var tmp1 = Var(Set[Expression](Or(a,b),a,Implies(b,c)),Implies(a,c))
+    var d2 = App(tmp1,Implies(a,c))
+    var tmp2 = Var(Set[Expression](Or(a,b),b, Implies(a,c)),Implies(b,c))
+    var d3 = App(tmp2,Implies(b,c))
+    val d = Var(Set[Expression](b),a) // ctx: (a,b) and st= a
+    val deriv=Case(d1,d2,d3)
+    deriv.print
+}
   // "HelloWorld" should "execute" in {
   //   val a = Proposition("a")
   //   val b = Proposition("b")
