@@ -5,7 +5,7 @@ import java.security.spec.{X509EncodedKeySpec, PKCS8EncodedKeySpec}
 import scala.util.control.Breaks._
 import scala.io.Source
 import java.io._
-
+import sys.process._
 
 final case class InvalidDerivationException(
     private val message: String = "Invalid derivation",
@@ -20,39 +20,60 @@ final case class InvalidVerificationException(
 abstract class Expression
 
 case object True extends Expression
-case class Principal (v : String, filename: String){
-    RSA.genSigningKeyPair(filename)
-    def public_key: PublicKey ={
-        val publicPath = "./key/"+ this.filename+"_public.der"
-        val ois = new ObjectInputStream(new FileInputStream(publicPath)) 
-        val publicKey = ois.readObject.asInstanceOf[PublicKey]
-        ois.close()
-        return publicKey
-    }
-    def sign(s:Expression) : Array[Byte] = {
-        //get the private key
-        val privatePath = "./key/"+ this.filename+"_private.der"
-        val ois = new ObjectInputStream(new FileInputStream(privatePath)) 
-        val privateKey = ois.readObject.asInstanceOf[PrivateKey]
-        ois.close()
-        val encryption = RSA.sign(privateKey, s.toString)
-        // println("prining the encryption of "+s.toString+": \n\n")
-        // print(encryption.toString)
-        return encryption
-        // sign the message
+// Do we need Sting in the parameters of the Principal. we need it because of creating String for verification
+//make it as per the certificate authority
+case class Principal (name: String){
+    // generating certificates
+    ("./Certification/create_cert.sh "+name)!
+    def sign(s:Expression, filename:String)= {
+        ("./Certification/sign.sh "+ s.toString + " " +filename+ " "+ this.name)!
     }
 }
+
+// case class Principal (v : String, filename: String){
+//     RSA.genSigningKeyPair(filename)
+//     def public_key: PublicKey ={
+//         val publicPath = "./key/"+ this.filename+"_public.der"
+//         val ois = new ObjectInputStream(new FileInputStream(publicPath)) 
+//         val publicKey = ois.readObject.asInstanceOf[PublicKey]
+//         ois.close()
+//         return publicKey
+//     }
+//     def sign(s:Expression) : Array[Byte] = {
+//         //get the private key
+//         val privatePath = "./key/"+ this.filename+"_private.der"
+//         val ois = new ObjectInputStream(new FileInputStream(privatePath)) 
+//         val privateKey = ois.readObject.asInstanceOf[PrivateKey]
+//         ois.close()
+//         val encryption = RSA.sign(privateKey, s.toString)
+//         // println("prining the encryption of "+s.toString+": \n\n")
+//         // print(encryption.toString)
+//         return encryption
+//         // sign the message
+//     }
+// }
 case class Proposition (v: String) extends Expression
 
-case class Says (P: Principal, s: Expression, enc:Array[Byte]) extends Expression {
-    if(!RSA.verify(P.public_key,enc,s)) throw InvalidVerificationException()
-    // def this(P:Principal,s: Expression, d:Derivation)={
-    //     flag = false
-    //     Says(P,d.st,_)
-
-    //  }
-    
+abstract class Says extends Expression
+case class Says_P (P: Principal, s: Expression, filename:String) extends Says {
+    // There is a problem that this command cannot handle blank spaces
+    val v = ("./Certification/verify.sh "+ s.toString+" "+filename+" "+ P.name)!;
+    if(v!=0) {
+        throw InvalidVerificationException()
+    }
 }
+case class Says_D(P: Principal, s:Expression, d:Derivation) extends Says {
+    if(d.st!=s) throw InvalidDerivationException()
+}
+// case class Says (P: Principal, s: Expression, enc:Array[Byte]) extends Expression {
+//     if(!RSA.verify(P.public_key,enc,s)) throw InvalidVerificationException()
+//     // def this(P:Principal,s: Expression, d:Derivation)={
+//     //     flag = false
+//     //     Says(P,d.st,_)
+
+//     //  }
+    
+// }
 
 case class And(a: Expression, b: Expression) extends Expression 
 case class Or(a: Expression, b: Expression) extends Expression 
@@ -145,10 +166,10 @@ case class Inj2(d: Derivation, s: Expression) extends Derivation{
 }
 
 //This is problematic as then anystatement could be made true. There should be some other mechanism to generate this statement
-// case class UnitM(d: Derivation, P: Principal) extends Derivation{
-//         override val ctx= d.ctx
-//         override val st=Says(P, d.st, P.sign(d.st))
-// }
+case class UnitM(d: Derivation, P: Principal) extends Derivation{
+        override val ctx= d.ctx
+        override val st=Says_D(P, d.st, d)
+}
 
 
 case class Case (d1: Derivation, d2: Derivation, d3: Derivation) extends Derivation{
@@ -164,21 +185,51 @@ case class Case (d1: Derivation, d2: Derivation, d3: Derivation) extends Derivat
 }
 
 
-case class Bindm(d1: Derivation, d2: Derivation) extends Derivation{
+
+case class BindM(d1: Derivation, d2: Derivation) extends Derivation{
     d1.st match{
-        case Says(p1,s1,_) => {d2.st match {
-                                case Says(p2,s2,_) => {assert(p1==p2);
+        case Says_P(p1,s1,_) => {d2.st match {
+                                case Says_P(p2,s2,_) => {assert(p1==p2);
                                                     assert(d1.ctx == d2.ctx - s1)
                                                    }
+                                case Says_D(p2,s2,_) => {assert(p1==p2);
+                                                    assert(d1.ctx == d2.ctx - s1)
+                                                   }                   
                                 case _ => throw InvalidDerivationException()
                                        }
                            }
+        case Says_D(p1,s1,_) => {d2.st match {
+                                case Says_P(p2,s2,_) => {assert(p1==p2);
+                                                    assert(d1.ctx == d2.ctx - s1)
+                                                   }
+                                case Says_D(p2,s2,_) => {assert(p1==p2);
+                                                    assert(d1.ctx == d2.ctx - s1)
+                                                   }                   
+                                case _ => throw InvalidDerivationException()
+                                       }
+                           }                   
         case _ => throw InvalidDerivationException() 
     }
 
     override val ctx = d1.ctx
     override val st= d2.st
 }
+
+// case class BindM(d1: Derivation, d2: Derivation) extends Derivation{
+//     d1.st match{
+//         case Says(p1,s1,_) => {d2.st match {
+//                                 case Says(p2,s2,_) => {assert(p1==p2);
+//                                                     assert(d1.ctx == d2.ctx - s1)
+//                                                    }
+//                                 case _ => throw InvalidDerivationException()
+//                                        }
+//                            }
+//         case _ => throw InvalidDerivationException() 
+//     }
+
+//     override val ctx = d1.ctx
+//     override val st= d2.st
+// }
 
 case class TLam(d: Derivation, x: Proposition) extends Derivation{
     if(isFree(d.ctx,x)) throw InvalidDerivationException()

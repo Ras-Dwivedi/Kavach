@@ -3,12 +3,13 @@ package kavach.attestation
 object definitions{
 	def isFree(s: Expression, x: Proposition): Boolean = {
     	val flag : Boolean = s match {
-	        case Says(p,s1,enc)      => isFree(s1,x)
-	        case And(s1,s2)      => isFree(s1,x) && isFree(s2,x)  
-	        case Or(s1,s2)       =>  isFree(s1,x) && isFree(s2,x)
-	        case Implies(s1,s2)  => isFree(s1,x) && isFree(s2,x)   
-	        case ForAll(y,s1)    => if (y== x) false else isFree(s1,x) // there is error in this definition. What about the cases where there is forall x, but no x under that, and in that case it should be free to substitute
-	        case Proposition(s1) => true
+	        case Says_P(p,s1,sign)      => isFree(s1,x)
+	        case Says_D(p,s1,d)        => isFree(s1,x)
+	        case And(s1,s2)     	   => isFree(s1,x) && isFree(s2,x)  
+	        case Or(s1,s2)     		   =>  isFree(s1,x) && isFree(s2,x)
+	        case Implies(s1,s2)  	   => isFree(s1,x) && isFree(s2,x)   
+	        case ForAll(y,s1)    	   => if (y== x) false else isFree(s1,x) // there is error in this definition. What about the cases where there is forall x, but no x under that, and in that case it should be free to substitute
+	        case Proposition(s1) 	   => true
 	        case _ => true    
     	}
 
@@ -25,7 +26,8 @@ object definitions{
 // This version of overloaded function return whethere t is free for x in s. but here t is Proposition
 	def isFree(s:Expression, t: Proposition, x:Proposition):Boolean  = {
 	    val flag:Boolean = s match {
-	        case Says(p,s1,enc)      => isFree(s1,t,x)
+	        case Says_P(p,s1,sign)      => isFree(s1,t,x)
+	        case Says_D(p,s1,d)      => isFree(s1,t,x)
 	        case And(s1,s2)      => isFree(s1,t,x) && isFree(s2,t,x)  
 	        case Or(s1,s2)       => isFree(s1,t,x) && isFree(s2,t,x)
 	        case Implies(s1,s2)  => isFree(s1,t,x) && isFree(s2,t,x)  
@@ -47,7 +49,8 @@ object definitions{
 
 	def isThere(s:Expression, x: Proposition):Boolean = {
 	    val flag = s match {
-	        case Says(p,s1,enc)      => isThere(s1,x)
+	        case Says_P(p,s1,sign)      => isThere(s1,x)
+	        case Says_D(p,s1,d)      => isThere(s1,x)	
 	        case And(s1,s2)      => isThere(s1,x) ||isThere(s2,x)  
 	        case Or(s1,s2)       =>  isThere(s1,x) || isThere(s2,x)
 	        case Implies(s1,s2)  => isThere(s1,x) ||isThere(s2,x)   
@@ -73,7 +76,8 @@ object definitions{
 // // the two overloaded function finds out the variables in a context, so that one can generate the list of not free variabls in the context
 	def variablesIn (s:Expression): Set[Proposition] ={
 	    var v = s match {
-	        case Says(p,s1,enc)      => variablesIn(s1)
+	        case Says_P(p,s1,sign)      => variablesIn(s1)
+	        case Says_D(p,s1,d)      => variablesIn(s1)
 	        case And(s1,s2)      => variablesIn(s1).++(variablesIn(s2))
 	        case Or(s1,s2)       =>  variablesIn(s1).++(variablesIn(s2))
 	        case Implies(s1,s2)  => variablesIn(s1).++(variablesIn(s2))
@@ -97,7 +101,8 @@ object definitions{
 	def substitute(d: Expression, t: Expression, x: Proposition): Expression={
 	    if(!isFree(d,t,x)) InvalidDerivationException()
 	    val v: Expression  = d match {
-	        case Says(p, s,enc)       => Says(p, substitute (s,t,x),enc) // this would run into problem as signature for all x is not same as signature for t
+	        case Says_P(p, s,sign)       => Says_P(p, substitute (s,t,x),sign) // this would run into problem as signature for all x is not same as signature for t. I should convert this into derivation
+	        case Says_D(p, s,d)       => Says_D(p, substitute (s,t,x),d)
 	        case And(s1,s2)       => And(substitute(s1,t,x), substitute(s2,t,x))
 	        case Or(s1,s2)        => Or(substitute(s1,t,x), substitute(s2,t,x))
 	        case Implies(s1,s2)   => Implies(substitute(s1,t,x), substitute(s2,t,x)) 

@@ -45,7 +45,7 @@ object WriteTestObject {
 
 		val deriv = Var(ctx, impl)
 		val proof = App(deriv, impl)
-		val P = Principal ("P", "keys_P")
+		val P = Principal ("P")
 		// P.sign(d)
 		// val Q = Principal ("P")
 		// val P_says = Says(P,c)

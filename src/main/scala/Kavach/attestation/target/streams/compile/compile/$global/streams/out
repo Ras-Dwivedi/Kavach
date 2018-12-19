@@ -1,0 +1,5 @@
+[0m[[0m[31merror[0m] [0m[0m/home/rm511/Desktop/bitbucket/Kavach/src/main/scala/Kavach/attestation/writeTestObject.scala:62:64: not enough arguments for method apply: (a: kavach.attestation.Expression, b: kavach.attestation.Expression)kavach.attestation.Or in object Or.[0m
+[0m[[0m[31merror[0m] [0m[0mUnspecified value parameter b.[0m
+[0m[[0m[31merror[0m] [0m[0m		list_object=list_object:::List(Proj1(Var(Set[Expression](),Or(a.b)),And(a,b)))[0m
+[0m[[0m[31merror[0m] [0m[0m		                                                             ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

@@ -12,30 +12,32 @@ class LogicalAttestationSpec extends FlatSpec {
     val prop_or = Or(a,b) // a||b
     val prop_and = And(a,b) // a && b
     val prop_implies = Implies(c,b) // c=> b
-    val P = Principal ("P", "P_Keys")
-    val P_says= Says(P,c,P.sign(c))
+    val P = Principal ("P")
+    P.sign(c,"P_says_c")
+    val P_says= Says_P(P,c,"P_says_c")
     println("\n\n\n\n\n\n\n\n\nall Proposition checked, all proposition formulated successfully")
   }  
 
   "Says_error" should  "throw InvaliVerificationError" in {
-    val P = Principal ("P", "P_Keys")
+    val P = Principal ("P")
     val c = Proposition("c") ;// defining the Proposition "c"
-    val Q = Principal("Q", "Q_keys")
+    val Q = Principal("Q")
+    Q.sign(c,"Q_says_c")
     // [InvalidVerificationException] should be thrownBy {
         assertThrows [InvalidVerificationException] {
         // val P_says= Says(P,c,P.sign(c))
         // val P_says= Says(P,c,"c".getBytes()) java.security.SignatureException
-        val P_says= Says(P,c,Q.sign(c))
+        val P_says= Says_P(P,c,"Q_says_c")
     }
   }
-  it should  "java.security.SignatureException" in {
-    val P = Principal ("P", "P_Keys")
+  it should  "throw InvalidVerificationException" in {
+    val P = Principal ("P")
     val c = Proposition("c") ;// defining the Proposition "c"
-    val Q = Principal("Q", "Q_keys")
+    val Q = Principal("Q")
     // [InvalidVerificationException] should be thrownBy {
-        assertThrows [java.security.SignatureException] {
+        assertThrows [InvalidVerificationException] {
         // val P_says= Says(P,c,P.sign(c))
-        val P_says= Says(P,c,"c".getBytes()) //java.security.SignatureException
+        val P_says= Says_P(P,c,"incorrect_file_name") //java.security.SignatureException
         // val P_says= Says(P,c,Q.sign(c))
     }
 
@@ -219,6 +221,70 @@ class LogicalAttestationSpec extends FlatSpec {
     val deriv=Case(d1,d2,d3)
     deriv.print
 }
+"Case" should "throw InvalidDerivationException" in {
+    val a = Proposition("a")
+    val b = Proposition("b")
+    val c = Proposition("c")
+    val d1 = Var(Set[Expression](Implies(a,c), Implies(b,c)), Or(a,b))// derivation of a Or b
+    var tmp1 = Var(Set[Expression](Or(a,b),a,Implies(b,c)),Implies(a,c))
+    var d2 = App(tmp1,Implies(a,c))
+    var tmp2 = Var(Set[Expression](Or(a,b),b, Implies(a,c)),Implies(b,c))
+    assertThrows [InvalidDerivationException]{
+    var d3 = App(tmp1,Implies(b,c))
+    val d = Var(Set[Expression](b),a) // ctx: (a,b) and st= a
+    val deriv=Case(d1,d2,d3)
+    deriv.print}
+}
+"UnitM" should "execute" in {
+    val a = Proposition("a")
+    // val b = Proposition("b")
+    val c = Var(Set[Expression](),a)
+    val P = Principal("P")
+    val deriv=UnitM(c,P)
+    deriv.print
+}
+
+"BindM" should "execute" in{
+    val a = Proposition("a")
+    val b = Proposition("b")
+    val P = Principal("P")
+    P.sign(a,"P_says_a")
+    P.sign(b,"P_says_b")
+    val P_says_a= Says_P(P,a,"P_says_a")
+    val P_says_b= Says_P(P,b,"P_says_b")
+
+    val d = Var(Set[Expression](Implies(a, P_says_b)), P_says_a)
+    val d1= Var(Set[Expression](a, P_says_a), Implies(a,P_says_b))
+    val d2= App(d1, Implies(a, P_says_b))
+    val deriv=BindM(d,d2)
+    deriv.print
+
+}
+
+"BindM" should "throw InvalidDerivationException" in{
+    val a = Proposition("a")
+    val b = Proposition("b")
+    val P = Principal("P")
+    P.sign(a,"P_says_a")
+    P.sign(b,"P_says_b")
+    val P_says_a= Says_P(P,a,"P_says_a")
+    val P_says_b= Says_P(P,b,"P_says_b")
+
+    val d = Var(Set[Expression](Implies(a, P_says_b)), P_says_a)
+    val d1= Var(Set[Expression](a,P_says_a), Implies(a,P_says_b))
+    // val d2= App(d1, Implies(sa, P_says_b))
+    assertThrows [InvalidDerivationException]{
+        val deriv=BindM(d,d1)
+        deriv.print
+    }    
+
+}
+}
+
+
+
+
+
   // "HelloWorld" should "execute" in {
   //   val a = Proposition("a")
   //   val b = Proposition("b")
@@ -237,7 +303,7 @@ class LogicalAttestationSpec extends FlatSpec {
   //   println("deriv: " + deriv.toString())
   //   println("proof: " + proof.toString())
   // }
-}
+
 
 // class LogicalAttestationTrial extends FlatSpec {
     
